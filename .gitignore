@@ -1,0 +1,10 @@
+# Scratch & temporary files
+scratch/
+.wrangler/
+.venv/
+env/
+venv/
+*.pyc
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
