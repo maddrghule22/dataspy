@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Property Valuation | Real Estate Price Prediction Dashboard</title>
-    <meta name="description" content="AI-powered residential property valuation platform using advanced Machine Learning Stacking Ensembles and real estate market analytics.">
+    <title>AI PROPERTY VALUATION | Machine Learning House Price Prediction</title>
+    <meta name="description" content="Estimate residential property values using machine learning and historical Ames Housing data. Data-driven property price predictions.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --brand-green: #059669;
             --brand-green-hover: #047857;
             --brand-green-light: #ECFDF5;
             --brand-green-border: #A7F3D0;
+            --emerald-accent: #10B981;
             --bg-color: #F8FAFC;
             --card-bg: #FFFFFF;
             --text-dark: #0F172A;
@@ -22,94 +24,93 @@
             --text-light: #94A3B8;
             --border-color: #E2E8F0;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 20px 40px -15px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+            --shadow-lg: 0 20px 40px -15px rgba(0,0,0,0.1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-dark);
             line-height: 1.5;
+            overflow-x: hidden;
         }
 
-        /* Top Navigation Header */
+        /* 2. TOP NAVIGATION */
         .navbar {
             background: #FFFFFF;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
-            padding: 0.75rem 2rem;
+            padding: 0.85rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
 
-        .nav-left {
+        .nav-brand {
             display: flex;
             align-items: center;
-            gap: 2.5rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 1.65rem;
-            font-weight: 800;
-            color: var(--brand-green);
-            letter-spacing: -0.5px;
+            gap: 0.5rem;
             text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
         }
 
-        .logo-tag {
-            font-size: 0.75rem;
-            background: #D1FAE5;
-            color: #065F46;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
+        .brand-dot {
+            width: 9px;
+            height: 9px;
+            background: var(--brand-green);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            background: var(--brand-green-light);
+            color: var(--brand-green-hover);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
             font-weight: 700;
+            border: 1px solid var(--brand-green-border);
         }
 
-        .nav-links {
+        .nav-menu {
             display: flex;
             align-items: center;
             gap: 1.75rem;
             list-style: none;
         }
 
-        .nav-links a {
+        .nav-menu a {
             text-decoration: none;
             color: #334155;
             font-weight: 600;
             font-size: 0.92rem;
+            transition: color 0.2s;
             display: flex;
             align-items: center;
             gap: 0.35rem;
-            transition: color 0.2s;
         }
 
-        .nav-links a:hover {
+        .nav-menu a:hover {
             color: var(--brand-green);
-        }
-
-        .badge-new {
-            background: #FFE4E6;
-            color: #E11D48;
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            text-transform: uppercase;
         }
 
         .badge-free {
@@ -117,63 +118,81 @@
             color: #047857;
             font-size: 0.65rem;
             font-weight: 800;
-            padding: 0.1rem 0.4rem;
+            padding: 0.15rem 0.45rem;
             border-radius: 4px;
-            text-transform: uppercase;
         }
 
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
-        .icon-btn {
+        .btn-post-property {
+            background: var(--brand-green);
+            color: white !important;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-post-property:hover {
+            background: var(--brand-green-hover);
+        }
+
+        .menu-toggle {
+            display: none;
             background: none;
             border: none;
             cursor: pointer;
-            position: relative;
-            color: #475569;
+            color: var(--text-dark);
+            padding: 0.4rem;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 61px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 999;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-drawer.open {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            transition: background 0.2s;
         }
 
-        .icon-btn:hover {
-            background: #F1F5F9;
+        .mobile-drawer a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #F1F5F9;
         }
 
-        .icon-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: #EF4444;
-            color: white;
-            font-size: 0.65rem;
-            font-weight: 800;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Hero Banner */
-        .hero-banner {
+        /* 3. HERO SECTION */
+        .hero-section {
             position: relative;
             background: url('images/hero_skyline_sunset.jpg') center/cover no-repeat;
-            min-height: 480px;
-            padding: 4rem 2rem 8rem 2rem;
+            min-height: 520px;
+            padding: 4.5rem 2rem 9rem 2rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             color: white;
-            overflow: hidden;
         }
 
         .hero-overlay {
@@ -182,7 +201,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.45) 60%, rgba(15, 23, 42, 0.2) 100%);
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.6) 55%, rgba(15, 23, 42, 0.25) 100%);
             z-index: 1;
         }
 
@@ -194,28 +213,29 @@
             z-index: 2;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 2rem;
+            align-items: center;
+            gap: 2.5rem;
         }
 
-        .hero-text {
-            max-width: 620px;
+        .hero-content {
+            max-width: 650px;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .hero-title {
-            font-size: 3.2rem;
+            font-size: 3.4rem;
             font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 0.75rem;
+            line-height: 1.12;
+            margin-bottom: 0.85rem;
             letter-spacing: -1px;
         }
 
         .hero-title span {
-            color: #10B981;
+            color: var(--emerald-accent);
         }
 
-        .hero-subtitle {
-            font-size: 1.35rem;
+        .hero-subheading {
+            font-size: 1.25rem;
             font-weight: 600;
             color: #E2E8F0;
             margin-bottom: 0.75rem;
@@ -224,103 +244,85 @@
         .hero-desc {
             font-size: 1.05rem;
             color: #CBD5E1;
-            margin-bottom: 1.75rem;
+            margin-bottom: 1.85rem;
             font-weight: 400;
+            line-height: 1.6;
         }
 
         .hero-badges {
             display: flex;
             gap: 0.85rem;
             flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
 
-        .hero-pill {
-            background: rgba(255, 255, 255, 0.15);
+        .hero-badge-pill {
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.25);
             color: #FFFFFF;
-            padding: 0.45rem 1rem;
+            padding: 0.45rem 1.1rem;
             border-radius: 30px;
             font-size: 0.85rem;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
         }
 
-        .hero-pill svg {
-            fill: #10B981;
+        .hero-badge-pill svg {
+            color: var(--emerald-accent);
         }
 
-        /* Right Hero Promo Card */
-        .hero-promo-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            color: #0F172A;
-            width: 320px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        /* 4. HERO CTA BUTTONS */
+        .hero-cta-group {
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
-        .promo-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .promo-pay {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: #475569;
-            text-transform: uppercase;
-        }
-
-        .promo-pay span {
-            font-size: 1.6rem;
-            color: #0F172A;
-            display: block;
-            line-height: 1;
-        }
-
-        .promo-logo {
-            width: 60px;
-            height: 38px;
-            background: #FF6B00;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .btn-primary-hero {
+            background: var(--brand-green);
             color: white;
-            font-weight: 900;
-            font-size: 1.1rem;
-            letter-spacing: -1px;
-        }
-
-        .promo-price-badge {
-            background: #FEF3C7;
-            border: 1px solid #FCD34D;
-            color: #92400E;
-            padding: 0.35rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            text-align: center;
-            letter-spacing: 0.5px;
-        }
-
-        .promo-spec {
-            font-size: 0.8rem;
+            padding: 0.95rem 1.85rem;
+            border-radius: 10px;
             font-weight: 700;
-            color: #475569;
-            text-align: center;
+            font-size: 1rem;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* Main Floating Valuation Section */
+        .btn-primary-hero:hover {
+            background: var(--brand-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
+        }
+
+        .btn-secondary-hero {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 0.95rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary-hero:hover {
+            background: #F8FAFC;
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CONTENT AREA */
         .main-container {
             max-width: 1280px;
             margin: 0 auto;
@@ -329,47 +331,41 @@
             z-index: 10;
         }
 
+        /* 6. AI VALUATION CARD */
         .valuation-card {
             background: #FFFFFF;
             border-radius: 20px;
             box-shadow: var(--shadow-lg);
             border: 1px solid var(--border-color);
-            margin-top: -5rem;
-            padding: 2rem;
-            margin-bottom: 3.5rem;
+            margin-top: -6rem;
+            padding: 2.25rem;
+            margin-bottom: 4rem;
             display: grid;
             grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.75fr);
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
-        .form-header {
+        .card-header-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #0F172A;
-            margin-bottom: 1.5rem;
-        }
-
-        .dot-green {
-            width: 10px;
-            height: 10px;
-            background: var(--brand-green);
-            border-radius: 50%;
-            display: inline-block;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
+            gap: 1.35rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.45rem;
+            position: relative;
         }
 
         .form-group.full {
@@ -377,7 +373,7 @@
         }
 
         label {
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             font-weight: 700;
             color: #475569;
             display: flex;
@@ -386,31 +382,109 @@
         }
 
         .val-badge {
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             font-weight: 800;
             color: var(--brand-green);
         }
 
-        select, input[type="text"] {
+        /* 8. CUSTOM DROPDOWN DESIGN */
+        select.native-select {
+            display: none;
+        }
+
+        .custom-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
             width: 100%;
             background: #F8FAFC;
             border: 1px solid #CBD5E1;
             border-radius: 10px;
-            padding: 0.65rem 0.85rem;
+            padding: 0.7rem 0.9rem;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #0F172A;
-            outline: none;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             transition: all 0.2s;
+            user-select: none;
         }
 
-        select:focus, input[type="text"]:focus {
+        .custom-select-trigger:hover {
+            background: #FFFFFF;
+            border-color: var(--brand-green);
+        }
+
+        .custom-select-container.is-open .custom-select-trigger {
             border-color: var(--brand-green);
             background: #FFFFFF;
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
 
-        /* Range Slider Styling */
+        .custom-select-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            z-index: 500;
+            padding: 0.5rem;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .custom-select-container.is-open .custom-select-panel {
+            display: block;
+            animation: fadeInDown 0.15s ease-out;
+        }
+
+        .search-box-input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            outline: none;
+        }
+
+        .search-box-input:focus {
+            border-color: var(--brand-green);
+        }
+
+        .custom-option {
+            padding: 0.6rem 0.85rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.15s;
+        }
+
+        .custom-option:hover, .custom-option.is-focused {
+            background: #F1F5F9;
+            color: var(--text-dark);
+        }
+
+        .custom-option.is-selected {
+            background: var(--brand-green-light);
+            color: var(--brand-green-hover);
+            font-weight: 700;
+        }
+
+        /* Range Slider */
         .slider-wrapper {
             display: flex;
             align-items: center;
@@ -430,8 +504,8 @@
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--brand-green);
             cursor: pointer;
@@ -441,15 +515,15 @@
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+            transform: scale(1.15);
         }
 
-        /* Right Valuation Output Box */
+        /* 9. ESTIMATED VALUE CARD */
         .result-box {
             background: #F0FDF4;
             border: 1px solid #DCFCE7;
             border-radius: 16px;
-            padding: 2rem 1.5rem;
+            padding: 2.25rem 1.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -468,9 +542,9 @@
         }
 
         .result-price {
-            font-size: 3rem;
+            font-size: 3.1rem;
             font-weight: 800;
-            color: #059669;
+            color: var(--brand-green);
             line-height: 1;
             margin-bottom: 0.75rem;
             letter-spacing: -1px;
@@ -479,14 +553,14 @@
         .result-margin {
             background: #D1FAE5;
             color: #065F46;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            padding: 0.35rem 0.85rem;
+            padding: 0.4rem 0.9rem;
             border-radius: 20px;
-            margin-bottom: 1.75rem;
+            margin-bottom: 1.85rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.35rem;
         }
 
         .btn-estimate {
@@ -494,7 +568,7 @@
             background: var(--brand-green);
             color: white;
             border: none;
-            padding: 0.9rem 1.5rem;
+            padding: 0.95rem 1.5rem;
             border-radius: 10px;
             font-size: 0.95rem;
             font-weight: 800;
@@ -508,7 +582,6 @@
 
         .btn-estimate:hover {
             background: var(--brand-green-hover);
-            transform: translateY(-1px);
             box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
         }
 
@@ -517,7 +590,7 @@
             background: white;
             color: var(--brand-green);
             border: 1px solid var(--brand-green-border);
-            padding: 0.75rem 1.5rem;
+            padding: 0.8rem 1.5rem;
             border-radius: 10px;
             font-size: 0.88rem;
             font-weight: 700;
@@ -533,22 +606,19 @@
             background: #ECFDF5;
         }
 
-        /* Category Explorer Carousel Section */
+        /* 10. EXPLORATION SECTION */
         .category-section {
-            margin-bottom: 3.5rem;
+            margin-bottom: 4rem;
         }
 
-        .category-header {
+        .section-header-title {
             text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .category-title {
             font-size: 0.9rem;
             font-weight: 800;
             color: #64748B;
             letter-spacing: 1.5px;
             text-transform: uppercase;
+            margin-bottom: 1.75rem;
         }
 
         .carousel-wrapper {
@@ -561,8 +631,8 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             background: white;
             border: 1px solid var(--border-color);
             border-radius: 50%;
@@ -587,12 +657,13 @@
 
         .category-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, 210px);
             gap: 1.25rem;
             width: 100%;
             overflow-x: auto;
             padding: 0.5rem 0.25rem;
             scrollbar-width: none;
+            scroll-behavior: smooth;
         }
 
         .category-grid::-webkit-scrollbar {
@@ -610,6 +681,8 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            text-decoration: none;
+            color: inherit;
         }
 
         .category-card:hover {
@@ -620,59 +693,124 @@
 
         .category-img {
             width: 100%;
-            height: 100px;
+            height: 110px;
             object-fit: cover;
         }
 
         .category-body {
-            padding: 0.85rem 0.75rem;
+            padding: 0.95rem 0.85rem;
         }
 
         .category-name {
-            font-size: 0.88rem;
+            font-size: 0.92rem;
             font-weight: 700;
-            color: #0F172A;
-            margin-bottom: 0.2rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
         }
 
         .category-sub {
-            font-size: 0.75rem;
-            color: #64748B;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.35;
         }
 
         .card-badge {
             position: absolute;
-            top: 6px;
-            left: 6px;
+            top: 8px;
+            left: 8px;
             background: #FFE4E6;
             color: #E11D48;
-            font-size: 0.6rem;
+            font-size: 0.62rem;
             font-weight: 800;
-            padding: 0.1rem 0.35rem;
+            padding: 0.15rem 0.45rem;
             border-radius: 4px;
             text-transform: uppercase;
         }
 
-        /* Multi-Algorithm Table Section */
-        .section-panel {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 3.5rem;
+        .card-badge.gray {
+            background: #F1F5F9;
+            color: #475569;
         }
 
-        .section-title-bar {
-            font-size: 1.25rem;
+        /* SECTION PANELS BASE */
+        .section-panel {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 4rem;
+        }
+
+        .panel-title {
+            font-size: 1.35rem;
             font-weight: 800;
-            color: #0F172A;
+            color: var(--text-dark);
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            letter-spacing: -0.3px;
         }
 
+        /* 17. ANALYTICS SECTION */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--brand-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* 19. NEIGHBORHOOD INSIGHTS */
+        .neigh-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: #F0FDF4;
+            border: 1px solid #DCFCE7;
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-top: 1.25rem;
+        }
+
+        .neigh-stat-item {
+            text-align: center;
+        }
+
+        .neigh-stat-num {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #047857;
+        }
+
+        .neigh-stat-sub {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #065F46;
+        }
+
+        /* 20. MODEL PERFORMANCE TABLE */
         .table-responsive {
             overflow-x: auto;
         }
@@ -723,18 +861,17 @@
             color: #047857;
         }
 
-        /* Gallery Grid */
+        /* 21. FEATURE IMPORTANCE GALLERY */
         .gallery-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
-            margin-top: 1.5rem;
         }
 
         .chart-card {
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 1.25rem;
             box-shadow: var(--shadow-sm);
         }
@@ -742,7 +879,7 @@
         .chart-card h4 {
             font-size: 0.95rem;
             font-weight: 700;
-            color: #0F172A;
+            color: var(--text-dark);
             margin-bottom: 0.85rem;
         }
 
@@ -752,44 +889,187 @@
             display: block;
         }
 
-        /* Footer */
+        /* 22. HOW IT WORKS */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .step-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--brand-green);
+            line-height: 1;
+            margin-bottom: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* 23. TRUST & TRANSPARENCY */
+        .transparency-box {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .transparency-box h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .transparency-box p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .disclaimer-card {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            border-radius: 12px;
+            padding: 1.25rem;
+            color: #92400E;
+            font-size: 0.82rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* 24. FOOTER */
         footer {
             background: #0F172A;
             color: #94A3B8;
-            padding: 3rem 2rem 2rem 2rem;
+            padding: 4rem 2rem 2rem 2rem;
             font-size: 0.88rem;
-            margin-top: 4rem;
+            margin-top: 5rem;
         }
 
-        .footer-container {
+        .footer-grid {
             max-width: 1280px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-brand-title span {
+            color: var(--emerald-accent);
+        }
+
+        .footer-col-title {
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .footer-links a {
+            color: #94A3B8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 0 auto;
+            border-top: 1px solid #1E293B;
+            padding-top: 1.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            border-top: 1px solid #1E293B;
-            padding-top: 1.5rem;
+            font-size: 0.82rem;
         }
 
-        .footer-logo {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #10B981;
-        }
-
-        @media (max-width: 992px) {
+        /* 25. RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
             .valuation-card {
                 grid-template-columns: 1fr;
             }
             .hero-container {
                 flex-direction: column;
             }
-            .category-grid {
-                grid-template-columns: repeat(4, 1fr);
+            .analytics-grid, .steps-grid, .neigh-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .hero-title {
+                font-size: 2.4rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full {
+                grid-column: span 1;
+            }
+            .analytics-grid, .steps-grid, .neigh-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -797,68 +1077,77 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
+    <!-- 2. TOP NAVIGATION -->
     <nav class="navbar">
-        <div class="nav-left">
-            <a href="#" class="logo">
-                DataSpy <span class="logo-tag">AI Valuation</span>
-            </a>
-            <ul class="nav-links">
-                <li><a href="#">For Buyers</a></li>
-                <li><a href="#">For Tenants</a></li>
-                <li><a href="#">For Owners</a></li>
-                <li><a href="#">For Dealers / Builders</a></li>
-                <li><a href="#">Insights <span class="badge-new">NEW</span></a></li>
-            </ul>
-        </div>
+        <a href="#" class="nav-brand">
+            AI VALUE <span class="brand-dot"></span> <span class="brand-sub">ML Valuation</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="#valuation-card">For Buyers</a></li>
+            <li><a href="#valuation-card">For Tenants</a></li>
+            <li><a href="#valuation-card">For Owners</a></li>
+            <li><a href="#valuation-card">For Dealers / Builders</a></li>
+            <li><a href="#insights">Insights</a></li>
+            <li><a href="#valuation-card">Post Property <span class="badge-free">FREE</span></a></li>
+        </ul>
+
         <div class="nav-right">
-            <a href="#" style="text-decoration: none; font-weight: 700; color: #334155; font-size: 0.9rem;">Post property <span class="badge-free">FREE</span></a>
-            <button class="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </button>
-            <button class="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                <span class="icon-badge">3</span>
-            </button>
-            <button class="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <a href="#valuation-card" class="btn-post-property">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Post Property
+            </a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
         </div>
     </nav>
 
-    <!-- HERO BANNER -->
-    <header class="hero-banner">
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Buyers</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Tenants</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Owners</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Dealers / Builders</a>
+        <a href="#insights" onclick="toggleMobileMenu()">Insights</a>
+        <a href="#how-it-works" onclick="toggleMobileMenu()">How It Works</a>
+        <a href="#performance" onclick="toggleMobileMenu()">Model Performance</a>
+    </div>
+
+    <!-- 3. HERO SECTION & 5. HERO VISUAL -->
+    <header class="hero-section">
         <div class="hero-overlay"></div>
         <div class="hero-container">
-            <div class="hero-text">
-                <h1 class="hero-title">AI <span>Property</span> Valuation</h1>
-                <div class="hero-subtitle">Machine Learning Powered Price Prediction</div>
-                <p class="hero-desc">Get an accurate estimate of your property's value based on historical data from Ames Housing Dataset.</p>
+            <div class="hero-content">
+                <h1 class="hero-title">AI <span>PROPERTY</span> VALUATION</h1>
+                <div class="hero-subheading">Machine Learning Powered Property Price Prediction</div>
+                <p class="hero-desc">Estimate residential property value using machine learning and historical housing data. Receive a data-driven estimate based on structural and geographical property features.</p>
                 
                 <div class="hero-badges">
-                    <div class="hero-pill">
-                        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                    <div class="hero-badge-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                         Machine Learning
                     </div>
-                    <div class="hero-pill">
-                        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.58 4 8 4s8-1.79 8-4M4 7c0-2.21 3.58-4 8-4s8 1.79 8 4"></path></svg>
+                    <div class="hero-badge-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
                         Ames Housing Dataset
                     </div>
-                    <div class="hero-pill">
-                        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-                        Live Interactive Engine
+                    <div class="hero-badge-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                        Interactive Valuation
                     </div>
                 </div>
-            </div>
 
-            <!-- Floating Promo Banner Card -->
-            <div class="hero-promo-card">
-                <div class="promo-top">
-                    <div class="promo-pay">PAY NOW <span>30%</span> REST ON POSSESSION</div>
-                    <div class="promo-logo">SS</div>
+                <!-- 4. HERO CTA BUTTONS -->
+                <div class="hero-cta-group">
+                    <a href="#valuation-card" class="btn-primary-hero">
+                        Estimate Property Value
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                    <a href="#how-it-works" class="btn-secondary-hero">
+                        Explore How It Works
+                    </a>
                 </div>
-                <div class="promo-price-badge">STARTING FROM ₹3.81CR</div>
-                <div class="promo-spec">4BHK + 4T, POWDER ROOM & PUJA ROOM</div>
             </div>
         </div>
     </header>
@@ -866,20 +1155,20 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="main-container">
 
-        <!-- FLOATING VALUATION CARD -->
-        <section class="valuation-card">
+        <!-- 6. AI VALUATION CARD & 7. EXISTING CONTROLS -->
+        <section class="valuation-card" id="valuation-card">
             
             <!-- LEFT FORM INPUTS -->
             <div>
-                <div class="form-header">
-                    <span class="dot-green"></span> Property Information
+                <div class="card-header-title">
+                    <span class="brand-dot"></span> Property Information
                 </div>
 
                 <div class="form-grid">
                     <!-- Model Selector -->
                     <div class="form-group">
                         <label for="model-select">ML Model Architecture</label>
-                        <select id="model-select" onchange="runMockPrediction()">
+                        <select id="model-select" class="native-select" onchange="runMockPrediction()">
                             <option value="stacking" selected>Stacking Ensemble Regressor (93.58% R²)</option>
                             <option value="lasso">Lasso (Tuned) Regressor (R² 93.17%)</option>
                             <option value="xgb">XGBoost (Tuned) Regressor (R² 92.94%)</option>
@@ -893,7 +1182,7 @@
                     <!-- Target City Market Index -->
                     <div class="form-group">
                         <label for="city-select">Target City Market Index</label>
-                        <select id="city-select" onchange="runMockPrediction()">
+                        <select id="city-select" class="native-select" onchange="runMockPrediction()">
                             <option value="1.00" selected>Ames, IA — Base Market (1.00x)</option>
                             <option value="1.08">Des Moines, IA — Regional Center (1.08x)</option>
                             <option value="1.15">Omaha, NE — Midwest Metro (1.15x)</option>
@@ -908,7 +1197,7 @@
                     <!-- Neighborhood -->
                     <div class="form-group">
                         <label for="neighborhood">Neighborhood <span class="val-badge" id="neighborhood-tier" style="color: #10B981;">Premium</span></label>
-                        <select id="neighborhood" onchange="updateTier()">
+                        <select id="neighborhood" class="native-select" onchange="updateTier()">
                             <option value="NridgHt" selected>Northridge Heights (NridgHt) - Premium</option>
                             <option value="NoRidge">Northridge (NoRidge) - Premium</option>
                             <option value="StoneBr">Stone Brook (StoneBr) - Premium</option>
@@ -925,7 +1214,7 @@
                     <!-- Kitchen Quality -->
                     <div class="form-group">
                         <label for="kitchen">Kitchen Quality <span class="val-badge" id="kitchen-tier" style="color: #10B981;">Good</span></label>
-                        <select id="kitchen" onchange="runMockPrediction()">
+                        <select id="kitchen" class="native-select" onchange="runMockPrediction()">
                             <option value="5">Excellent</option>
                             <option value="4" selected>Good</option>
                             <option value="3">Typical / Average</option>
@@ -976,7 +1265,7 @@
                 </div>
             </div>
 
-            <!-- RIGHT VALUATION DISPLAY -->
+            <!-- 9. ESTIMATED VALUE CARD -->
             <div class="result-box">
                 <div class="result-label">ESTIMATED PROPERTY VALUE</div>
                 <div class="result-price" id="estimated-price">$424,950</div>
@@ -994,72 +1283,77 @@
 
         </section>
 
-        <!-- CATEGORY EXPLORER CAROUSEL -->
-        <section class="category-section">
-            <div class="category-header">
-                <div class="category-title">GET STARTED WITH EXPLORING REAL ESTATE OPTIONS</div>
-            </div>
+        <!-- 10. EXPLORATION SECTION CAROUSEL -->
+        <section class="category-section" id="insights">
+            <div class="section-header-title">EXPLORE REAL ESTATE INSIGHTS</div>
 
             <div class="carousel-wrapper">
                 <button class="carousel-arrow left" onclick="scrollCarousel(-1)">&#10094;</button>
 
                 <div class="category-grid" id="category-grid">
                     
-                    <div class="category-card">
-                        <img src="images/cat_buying_home.jpg" alt="Buying a home" class="category-img">
+                    <!-- 11. BUYING A HOME -->
+                    <div class="category-card" onclick="scrollToElement('valuation-card')">
+                        <img src="images/cat_buying_home.jpg" alt="Buying a Home" class="category-img">
                         <div class="category-body">
-                            <div class="category-name">Buying a home</div>
-                            <div class="category-sub">Find your dream home</div>
+                            <div class="category-name">Buying a Home</div>
+                            <div class="category-sub">Explore property valuation and home-buying insights.</div>
                         </div>
                     </div>
 
-                    <div class="category-card">
-                        <img src="images/cat_buying_home.jpg" alt="Renting a home" class="category-img" style="filter: hue-rotate(45deg);">
+                    <!-- 12. RENTING A HOME -->
+                    <div class="category-card" onclick="scrollToElement('valuation-card')">
+                        <img src="images/cat_buying_home.jpg" alt="Renting a Home" class="category-img" style="filter: hue-rotate(45deg);">
                         <div class="category-body">
-                            <div class="category-name">Renting a home</div>
-                            <div class="category-sub">Explore rental options</div>
+                            <div class="category-name">Renting a Home</div>
+                            <div class="category-sub">Explore rental-property insights and valuation tools.</div>
                         </div>
                     </div>
 
-                    <div class="category-card">
-                        <span class="card-badge">NEW</span>
+                    <!-- 13. INVESTMENT CARD -->
+                    <div class="category-card" onclick="scrollToElement('insights-analytics')">
                         <img src="images/cat_invest_real_estate.jpg" alt="Invest in Real Estate" class="category-img">
                         <div class="category-body">
                             <div class="category-name">Invest in Real Estate</div>
-                            <div class="category-sub">High returns & growth</div>
+                            <div class="category-sub">Understand property value and historical housing patterns.</div>
                         </div>
                     </div>
 
-                    <div class="category-card">
-                        <img src="images/cat_sell_rent_property.jpg" alt="Sell/Rent property" class="category-img">
+                    <!-- 14. SELL PROPERTY CARD -->
+                    <div class="category-card" onclick="scrollToElement('valuation-card')">
+                        <img src="images/cat_sell_rent_property.jpg" alt="Sell / Rent Your Property" class="category-img">
                         <div class="category-body">
-                            <div class="category-name">Sell/Rent property</div>
-                            <div class="category-sub">List & sell faster</div>
+                            <div class="category-name">Sell / Rent Your Property</div>
+                            <div class="category-sub">Use AI valuation insights to understand estimated value.</div>
                         </div>
                     </div>
 
+                    <!-- 15. PLOTS / LAND -->
                     <div class="category-card">
-                        <img src="images/cat_plots_land.jpg" alt="Plots/Land" class="category-img">
+                        <span class="card-badge gray">COMING SOON</span>
+                        <img src="images/cat_plots_land.jpg" alt="Plots & Land" class="category-img">
                         <div class="category-body">
-                            <div class="category-name">Plots/Land</div>
-                            <div class="category-sub">Find plots near you</div>
+                            <div class="category-name">Plots & Land</div>
+                            <div class="category-sub">Explore land and property valuation concepts.</div>
                         </div>
                     </div>
 
-                    <div class="category-card">
+                    <!-- 16. MARKET INSIGHTS -->
+                    <div class="category-card" onclick="scrollToElement('insights-analytics')">
                         <span class="card-badge">NEW</span>
-                        <img src="images/cat_invest_real_estate.jpg" alt="Explore Insights" class="category-img" style="filter: brightness(0.9) contrast(1.1);">
+                        <img src="images/cat_invest_real_estate.jpg" alt="Market Insights" class="category-img" style="filter: brightness(0.9) contrast(1.1);">
                         <div class="category-body">
-                            <div class="category-name">Explore Insights</div>
-                            <div class="category-sub">Market & price trends</div>
+                            <div class="category-name">Market Insights</div>
+                            <div class="category-sub">Explore historical housing data and dataset distributions.</div>
                         </div>
                     </div>
 
-                    <div class="category-card">
-                        <img src="images/cat_buying_home.jpg" alt="PG / Commercial" class="category-img" style="filter: grayscale(0.5);">
+                    <!-- COMMERCIAL PROPERTY -->
+                    <div class="category-card" onclick="scrollToElement('valuation-card')">
+                        <img src="images/cat_buying_home.jpg" alt="Commercial Property" class="category-img" style="filter: grayscale(0.5);">
                         <div class="category-body">
-                            <div class="category-name">PG / Commercial</div>
-                            <div class="category-sub">Commercial spaces</div>
+                            <div class="category-name">Commercial Property</div>
+                            <div class="category-sub">Explore commercial spaces and valuation models.</div>
                         </div>
                     </div>
 
@@ -1069,9 +1363,98 @@
             </div>
         </section>
 
-        <!-- MULTI-ALGORITHM PERFORMANCE COMPARISON -->
+        <!-- 17. ANALYTICS SECTION -->
+        <section class="section-panel" id="insights-analytics">
+            <div class="panel-title">
+                PROPERTY MARKET INSIGHTS
+                <span style="font-size: 0.78rem; background: #F1F5F9; color: #475569; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 600;">Historical Ames Housing Dataset</span>
+            </div>
+            
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <div class="stat-val">1,460</div>
+                    <div class="stat-label">Dataset Properties</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$163,000</div>
+                    <div class="stat-label">Historical Median Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$180,921</div>
+                    <div class="stat-label">Average Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">79</div>
+                    <div class="stat-label">Features Analyzed</div>
+                </div>
+            </div>
+
+            <!-- 19. NEIGHBORHOOD PRICE INSIGHTS -->
+            <div style="margin-top: 2rem;">
+                <div style="font-weight: 700; font-size: 1rem; color: var(--text-dark); margin-bottom: 0.5rem;">NEIGHBORHOOD PRICE INSIGHTS</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Historical sales metrics calculated directly from the training dataset for the selected neighborhood.</p>
+
+                <div class="neigh-stats-grid" id="neigh-stats-box">
+                    <div class="neigh-stat-item">
+                        <div class="neigh-stat-num" id="ns-count">77</div>
+                        <div class="neigh-stat-sub">Historical Properties</div>
+                    </div>
+                    <div class="neigh-stat-item">
+                        <div class="neigh-stat-num" id="ns-avg">$316,270</div>
+                        <div class="neigh-stat-sub">Average Sale Price</div>
+                    </div>
+                    <div class="neigh-stat-item">
+                        <div class="neigh-stat-num" id="ns-median">$315,000</div>
+                        <div class="neigh-stat-sub">Median Sale Price</div>
+                    </div>
+                    <div class="neigh-stat-item">
+                        <div class="neigh-stat-num" id="ns-range">$154k - $611k</div>
+                        <div class="neigh-stat-sub">Price Range (Min - Max)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 18. PRICE DISTRIBUTION -->
         <section class="section-panel">
-            <div class="section-title-bar">Model Performance & Multi-Algorithm Comparison</div>
+            <div class="panel-title">HISTORICAL PROPERTY PRICE DISTRIBUTION</div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">Distribution of SalePrice values within the historical Ames Housing dataset.</p>
+            <div class="gallery-grid">
+                <div class="chart-card">
+                    <h4>Prediction Error & Residual Distribution</h4>
+                    <img src="graphs/prediction_error_distribution.png" alt="Distribution of SalePrice values in Ames Housing Dataset">
+                </div>
+                <div class="chart-card">
+                    <h4>Cross Validation RMSE (Log Scale)</h4>
+                    <img src="graphs/cross_validation_comparison.png" alt="Cross Validation Error Comparison">
+                </div>
+            </div>
+        </section>
+
+        <!-- 20. MODEL PERFORMANCE -->
+        <section class="section-panel" id="performance">
+            <div class="panel-title">AI MODEL PERFORMANCE</div>
+            
+            <div class="analytics-grid" style="margin-bottom: 2rem;">
+                <div class="stat-card" style="background: #ECFDF5; border-color: var(--brand-green-border);">
+                    <div class="stat-val" style="font-size: 1.25rem;">Stacking Ensemble</div>
+                    <div class="stat-label" style="color: #047857;">Final Selected Model</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">93.58%</div>
+                    <div class="stat-label">R² Score (Accuracy)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$18,828</div>
+                    <div class="stat-label">Validation RMSE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">0.1127</div>
+                    <div class="stat-label">Cross Validation Log Error</div>
+                </div>
+            </div>
+
+            <div style="font-weight: 700; font-size: 1rem; color: var(--text-dark); margin-bottom: 1rem;">Model Comparison Table</div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -1138,40 +1521,118 @@
             </div>
         </section>
 
-        <!-- DIAGNOSTIC VISUALIZATIONS GALLERY -->
+        <!-- 21. FEATURE IMPORTANCE -->
         <section class="section-panel">
-            <div class="section-title-bar">Model Diagnostics & Statistical Visualizations</div>
+            <div class="panel-title">WHAT INFLUENCES PROPERTY VALUE?</div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">Relative importance scores extracted from trained ensemble models showing the features that contribute most to property valuation estimates.</p>
             <div class="gallery-grid">
                 <div class="chart-card">
-                    <h4>Model Comparison - RMSE ($)</h4>
-                    <img src="graphs/model_rmse_comparison.png" alt="Model RMSE Comparison Chart">
+                    <h4>Top Feature Importances (XGBoost)</h4>
+                    <img src="graphs/feature_importance_xgboost.png" alt="Top 20 Features Importance XGBoost">
                 </div>
                 <div class="chart-card">
-                    <h4>Cross Validation RMSE (Log Scale)</h4>
-                    <img src="graphs/cross_validation_comparison.png" alt="Cross Validation Error Comparison">
+                    <h4>Top Feature Importances (Random Forest)</h4>
+                    <img src="graphs/feature_importance_random_forest.png" alt="Top 20 Features Importance Random Forest">
                 </div>
-                <div class="chart-card">
-                    <h4>Actual vs Predicted (Stacking Ensemble)</h4>
-                    <img src="graphs/actual_vs_predicted_stacking.png" alt="Actual vs Predicted Scatter Plot">
+            </div>
+        </section>
+
+        <!-- 22. HOW IT WORKS -->
+        <section class="section-panel" id="how-it-works">
+            <div class="panel-title" style="justify-content: center; margin-bottom: 2rem;">HOW IT WORKS</div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <div class="step-title">ENTER PROPERTY DETAILS</div>
+                    <div class="step-desc">Provide basic property characteristics such as area, quality rating, age, and location.</div>
                 </div>
-                <div class="chart-card">
-                    <h4>Final Model Residual Error Distribution</h4>
-                    <img src="graphs/prediction_error_distribution.png" alt="Residual Distribution Histogram">
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <div class="step-title">ANALYZE DATA</div>
+                    <div class="step-desc">The system processes the input using the trained leakage-safe ML preprocessing pipeline.</div>
                 </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <div class="step-title">GENERATE ESTIMATE</div>
+                    <div class="step-desc">The Stacking Ensemble model predicts a calibrated, data-driven estimated property value.</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">04</div>
+                    <div class="step-title">UNDERSTAND THE RESULT</div>
+                    <div class="step-desc">View model error margins, benchmark metrics, and historical dataset insights.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 23. TRUST / TRANSPARENCY -->
+        <section class="section-panel">
+            <div class="panel-title">ABOUT THE VALUATION</div>
+            <div class="transparency-box">
+                <h4>Methodology & Machine Learning Framework</h4>
+                <p>This property valuation system utilizes scikit-learn and XGBoost regression models trained on historical Ames, Iowa property sales records. Data preprocessing incorporates leakage-safe imputation, standard scaling, one-hot encoding, and feature engineering (Total SF, Bathrooms, Property Age).</p>
+            </div>
+            
+            <div class="disclaimer-card">
+                <strong>DISCLAIMER:</strong> This tool provides a machine-learning estimate based on historical Ames Housing data. It is intended for educational and analytical purposes and should not be considered a professional property appraisal or guaranteed market price.
             </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
+    <!-- 24. FOOTER -->
     <footer>
-        <div class="footer-container">
-            <div class="footer-logo">DataSpy Technologies</div>
-            <div>AI Property Valuation Platform &copy; 2026. All rights reserved.</div>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand-title">AI VALUE <span>.</span></div>
+                <p style="font-size: 0.84rem; line-height: 1.6; color: #94A3B8;">
+                    Data-driven residential property valuation powered by Machine Learning Stacking Ensembles and historical real estate analytics.
+                </p>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Product</div>
+                <ul class="footer-links">
+                    <li><a href="#valuation-card">Valuation Engine</a></li>
+                    <li><a href="#insights">Market Insights</a></li>
+                    <li><a href="#performance">Model Performance</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Resources</div>
+                <ul class="footer-links">
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#insights-analytics">Historical Dataset</a></li>
+                    <li><a href="#performance">Documentation</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Company</div>
+                <ul class="footer-links">
+                    <li><a href="#">About Project</a></li>
+                    <li><a href="#">DataSpy Technologies</a></li>
+                    <li><a href="#">Contact Support</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Legal</div>
+                <ul class="footer-links">
+                    <li><a href="#disclaimer">Disclaimer</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>&copy; 2026 AI VALUE. All rights reserved.</div>
+            <div>Machine Learning &bull; Data Science &bull; Ames Housing Dataset</div>
         </div>
     </footer>
 
-    <!-- JAVASCRIPT VALUATION LOGIC -->
+    <!-- JAVASCRIPT & CUSTOM DROPDOWN ENGINE -->
     <script>
         const neighborhoodWeights = {
             'NoRidge': 1.65,
@@ -1184,6 +1645,19 @@
             'NAmes': 0.95,
             'Edwards': 0.85,
             'OldTown': 0.75
+        };
+
+        const neighborhoodStats = {
+            'NridgHt': { count: 77, avg: '$316,270', median: '$315,000', range: '$154k - $611k' },
+            'NoRidge': { count: 41, avg: '$335,000', median: '$301,500', range: '$190k - $755k' },
+            'StoneBr': { count: 25, avg: '$310,499', median: '$278,000', range: '$130k - $556k' },
+            'Veenker': { count: 11, avg: '$238,772', median: '$218,000', range: '$162k - $385k' },
+            'Somerst': { count: 86, avg: '$225,370', median: '$225,000', range: '$144k - $471k' },
+            'CollgCr': { count: 150, avg: '$197,965', median: '$197,200', range: '$110k - $424k' },
+            'Gilbert': { count: 79, avg: '$192,854', median: '$181,000', range: '$141k - $377k' },
+            'NAmes': { count: 225, avg: '$145,847', median: '$140,000', range: '$87k - $345k' },
+            'Edwards': { count: 100, avg: '$128,219', median: '$121,750', range: '$58k - $320k' },
+            'OldTown': { count: 113, avg: '$128,225', median: '$119,000', range: '$34k - $475k' }
         };
 
         const modelMetrics = {
@@ -1231,6 +1705,14 @@
                 tierSpan.innerText = "Standard";
                 tierSpan.style.color = "#64748B";
             }
+
+            // Update neighborhood stats box
+            let stats = neighborhoodStats[neighborhood] || neighborhoodStats['NridgHt'];
+            document.getElementById('ns-count').innerText = stats.count;
+            document.getElementById('ns-avg').innerText = stats.avg;
+            document.getElementById('ns-median').innerText = stats.median;
+            document.getElementById('ns-range').innerText = stats.range;
+
             runMockPrediction();
         }
 
@@ -1264,7 +1746,7 @@
         }
 
         function generateReport() {
-            alert("Valuation Report generated! Downloading PDF summary for " + document.getElementById('estimated-price').innerText);
+            alert("Valuation Report generated! Summary for " + document.getElementById('estimated-price').innerText + " has been compiled.");
         }
 
         function scrollCarousel(direction) {
@@ -1272,7 +1754,121 @@
             grid.scrollBy({ left: direction * 240, behavior: 'smooth' });
         }
 
-        // Initialize
+        function scrollToElement(id) {
+            let elem = document.getElementById(id);
+            if (elem) {
+                elem.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleMobileMenu() {
+            let drawer = document.getElementById('mobile-drawer');
+            drawer.classList.toggle('open');
+        }
+
+        /* 8. CUSTOM DROPDOWN ENGINE IMPLEMENTATION */
+        function initCustomSelect(selectId, hasSearch = false, searchPlaceholder = "Search...") {
+            const nativeSelect = document.getElementById(selectId);
+            if (!nativeSelect) return;
+
+            const container = document.createElement('div');
+            container.className = 'custom-select-container';
+
+            const trigger = document.createElement('div');
+            trigger.className = 'custom-select-trigger';
+            trigger.setAttribute('tabindex', '0');
+            
+            const valueSpan = document.createElement('span');
+            const selectedOpt = nativeSelect.options[nativeSelect.selectedIndex];
+            valueSpan.textContent = selectedOpt ? selectedOpt.textContent : '';
+
+            const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            arrowSvg.setAttribute('width', '16');
+            arrowSvg.setAttribute('height', '16');
+            arrowSvg.setAttribute('viewBox', '0 0 24 24');
+            arrowSvg.setAttribute('fill', 'none');
+            arrowSvg.setAttribute('stroke', 'currentColor');
+            arrowSvg.setAttribute('stroke-width', '2');
+            arrowSvg.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+
+            trigger.appendChild(valueSpan);
+            trigger.appendChild(arrowSvg);
+
+            const panel = document.createElement('div');
+            panel.className = 'custom-select-panel';
+
+            let searchInput = null;
+            if (hasSearch) {
+                searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.className = 'search-box-input';
+                searchInput.placeholder = searchPlaceholder;
+                panel.appendChild(searchInput);
+            }
+
+            const optionsList = document.createElement('div');
+            
+            Array.from(nativeSelect.options).forEach((opt) => {
+                const item = document.createElement('div');
+                item.className = 'custom-option' + (opt.selected ? ' is-selected' : '');
+                item.setAttribute('data-value', opt.value);
+                item.textContent = opt.textContent;
+
+                item.addEventListener('click', () => {
+                    nativeSelect.value = opt.value;
+                    nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    valueSpan.textContent = opt.textContent;
+                    
+                    Array.from(optionsList.children).forEach(c => c.classList.remove('is-selected'));
+                    item.classList.add('is-selected');
+                    container.classList.remove('is-open');
+                });
+
+                optionsList.appendChild(item);
+            });
+
+            panel.appendChild(optionsList);
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    Array.from(optionsList.children).forEach((opt) => {
+                        const match = opt.textContent.toLowerCase().includes(q);
+                        opt.style.display = match ? 'flex' : 'none';
+                    });
+                });
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.custom-select-container.is-open').forEach(c => {
+                    if (c !== container) c.classList.remove('is-open');
+                });
+                container.classList.toggle('is-open');
+                if (container.classList.contains('is-open') && searchInput) {
+                    setTimeout(() => searchInput.focus(), 50);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) {
+                    container.classList.remove('is-open');
+                }
+            });
+
+            container.appendChild(trigger);
+            container.appendChild(panel);
+
+            nativeSelect.parentNode.insertBefore(container, nativeSelect.nextSibling);
+        }
+
+        // Initialize Custom Dropdowns
+        initCustomSelect('model-select', false);
+        initCustomSelect('city-select', false);
+        initCustomSelect('neighborhood', true, 'Search neighborhood...');
+        initCustomSelect('kitchen', false);
+
+        // Initial run
         updateTier();
     </script>
 </body>
