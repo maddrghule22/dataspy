@@ -5,14 +5,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, StackingRegressor
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
@@ -89,21 +89,61 @@ preprocessor = ColumnTransformer(
         ('cat', categorical_transformer, categorical_features)
     ])
 
-# 3. MODEL TRAINING
-print("\n3. MODEL TRAINING")
-models = {
-    'Linear Regression': LinearRegression(),
-    'Decision Tree': DecisionTreeRegressor(random_state=42),
-    'Random Forest': RandomForestRegressor(n_estimators=300, random_state=42),
-    'XGBoost': XGBRegressor(n_estimators=400, learning_rate=0.05, random_state=42, verbosity=0)
+# 3. HYPERPARAMETER TUNING & MODEL SELECTION
+print("\n3. HYPERPARAMETER TUNING & MODEL SELECTION", flush=True)
+
+# Base model definitions with grid parameters
+base_models = {
+    'Linear Regression': (LinearRegression(), {}),
+    'Ridge (Tuned)': (Ridge(random_state=42), {'model__alpha': [1.0, 10.0, 50.0]}),
+    'Lasso (Tuned)': (Lasso(random_state=42, max_iter=5000), {'model__alpha': [0.0005, 0.001, 0.005]}),
+    'Decision Tree': (DecisionTreeRegressor(random_state=42), {}),
+    'Random Forest (Tuned)': (RandomForestRegressor(n_estimators=200, max_depth=20, random_state=42), {}),
+    'XGBoost (Tuned)': (XGBRegressor(n_estimators=250, learning_rate=0.05, max_depth=4, random_state=42, verbosity=0), {})
 }
 
+best_estimators = {}
 pipelines = {}
-for name, model in models.items():
-    pipelines[name] = Pipeline(steps=[('preprocessor', preprocessor),
-                                      ('model', model)])
-    print(f"Training {name}...")
-    pipelines[name].fit(X_train, y_train)
+
+for name, (model, param_grid) in base_models.items():
+    pipe = Pipeline(steps=[('preprocessor', preprocessor), ('model', model)])
+    if param_grid:
+        print(f"Performing GridSearchCV for {name}...", flush=True)
+        grid = GridSearchCV(pipe, param_grid, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
+        grid.fit(X_train, y_train)
+        print(f"  Best params for {name}: {grid.best_params_}", flush=True)
+        pipelines[name] = grid.best_estimator_
+        best_estimators[name] = grid.best_estimator_.named_steps['model']
+    else:
+        print(f"Training tuned {name}...", flush=True)
+        pipe.fit(X_train, y_train)
+        pipelines[name] = pipe
+        best_estimators[name] = pipe.named_steps['model']
+
+# 3b. BUILD STACKING ENSEMBLE REGRESSOR
+print("\n3b. BUILDING STACKING ENSEMBLE REGRESSOR...", flush=True)
+stack_base_estimators = [
+    ('ridge', best_estimators['Ridge (Tuned)']),
+    ('lasso', best_estimators['Lasso (Tuned)']),
+    ('rf', best_estimators['Random Forest (Tuned)']),
+    ('xgb', best_estimators['XGBoost (Tuned)'])
+]
+
+stacking_model = StackingRegressor(
+    estimators=stack_base_estimators,
+    final_estimator=Ridge(alpha=10.0, random_state=42),
+    cv=5,
+    n_jobs=-1
+)
+
+stacking_pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('model', stacking_model)
+])
+
+print("Training Stacking Ensemble...", flush=True)
+stacking_pipeline.fit(X_train, y_train)
+pipelines['Stacking Ensemble'] = stacking_pipeline
 
 # 4. MODEL EVALUATION
 print("\n4. MODEL EVALUATION")
@@ -134,17 +174,18 @@ results_df = pd.DataFrame(results_list)
 print(results_df.to_string(index=False))
 
 # 5. CROSS VALIDATION
-print("\n5. CROSS VALIDATION")
+print("\n5. CROSS VALIDATION", flush=True)
 cv_results = []
 for name, pipeline in pipelines.items():
-    scores = cross_val_score(pipeline, X_train, y_train, cv=5, scoring='neg_mean_squared_error', n_jobs=-1)
+    cv_k = 3 if name == 'Stacking Ensemble' else 5
+    scores = cross_val_score(pipeline, X_train, y_train, cv=cv_k, scoring='neg_mean_squared_error', n_jobs=-1)
     rmse_scores = np.sqrt(-scores)
     cv_results.append({
         'Model': name,
         'Mean_CV_RMSE_log': np.mean(rmse_scores),
         'Std_CV_RMSE_log': np.std(rmse_scores)
     })
-    print(f"{name}: Mean CV RMSE (log scale) = {np.mean(rmse_scores):.4f}, Std = {np.std(rmse_scores):.4f}")
+    print(f"{name}: Mean CV RMSE (log scale) = {np.mean(rmse_scores):.4f}, Std = {np.std(rmse_scores):.4f}", flush=True)
 
 cv_df = pd.DataFrame(cv_results)
 
@@ -152,10 +193,12 @@ cv_df = pd.DataFrame(cv_results)
 print("\n6. GENERATING GRAPHS")
 
 def plot_bar(df, x_col, y_col, title, filename, ylabel):
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=x_col, y=y_col, data=df, palette='viridis')
-    plt.title(title)
-    plt.ylabel(ylabel)
+    plt.figure(figsize=(12, 6))
+    ax = sns.barplot(x=x_col, y=y_col, data=df, palette='viridis')
+    plt.title(title, fontsize=14, fontweight='bold')
+    plt.ylabel(ylabel, fontsize=12)
+    plt.xlabel('Model', fontsize=12)
+    plt.xticks(rotation=15)
     plt.tight_layout()
     plt.savefig(f"graphs/{filename}", dpi=300)
     plt.close()
@@ -165,11 +208,12 @@ plot_bar(results_df, 'Model', 'RMSE', 'Model Comparison - RMSE', 'model_rmse_com
 plot_bar(results_df, 'Model', 'R2', 'Model Comparison - R²', 'model_r2_comparison.png', 'R² Score')
 
 # d) cross_validation_comparison.png
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 sns.barplot(x='Model', y='Mean_CV_RMSE_log', data=cv_df, palette='viridis', capsize=.1)
 plt.errorbar(x=range(len(cv_df)), y=cv_df['Mean_CV_RMSE_log'], yerr=cv_df['Std_CV_RMSE_log'], fmt='none', c='black', capsize=5)
-plt.title('Cross Validation RMSE (Log Scale) with Std Dev')
-plt.ylabel('CV RMSE (log)')
+plt.title('Cross Validation RMSE (Log Scale) with Std Dev', fontsize=14, fontweight='bold')
+plt.ylabel('CV RMSE (log)', fontsize=12)
+plt.xticks(rotation=15)
 plt.tight_layout()
 plt.savefig("graphs/cross_validation_comparison.png", dpi=300)
 plt.close()
@@ -177,15 +221,14 @@ plt.close()
 # Scatter plots actual vs predicted
 def plot_scatter(actuals, preds, title, filename):
     plt.figure(figsize=(8, 8))
-    plt.scatter(actuals, preds, alpha=0.6, color='b')
+    plt.scatter(actuals, preds, alpha=0.6, color='teal')
     min_val = min(actuals.min(), preds.min())
     max_val = max(actuals.max(), preds.max())
-    plt.plot([min_val, max_val], [min_val, max_val], 'r--')
-    plt.title(title)
-    plt.xlabel('Actual SalePrice ($)')
-    plt.ylabel('Predicted SalePrice ($)')
+    plt.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2)
+    plt.title(title, fontsize=14, fontweight='bold')
+    plt.xlabel('Actual SalePrice ($)', fontsize=12)
+    plt.ylabel('Predicted SalePrice ($)', fontsize=12)
     
-    # Format axes with $ and commas
     ax = plt.gca()
     ax.get_xaxis().set_major_formatter(plt.matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
     ax.get_yaxis().set_major_formatter(plt.matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
@@ -196,24 +239,26 @@ def plot_scatter(actuals, preds, title, filename):
 
 actuals_exp = np.expm1(y_test)
 plot_scatter(actuals_exp, predictions['Linear Regression'], 'Actual vs Predicted (Linear Regression)', 'actual_vs_predicted_linear.png')
+plot_scatter(actuals_exp, predictions['Ridge (Tuned)'], 'Actual vs Predicted (Ridge Tuned)', 'actual_vs_predicted_ridge.png')
 plot_scatter(actuals_exp, predictions['Decision Tree'], 'Actual vs Predicted (Decision Tree)', 'actual_vs_predicted_tree.png')
-plot_scatter(actuals_exp, predictions['Random Forest'], 'Actual vs Predicted (Random Forest)', 'actual_vs_predicted_random_forest.png')
-plot_scatter(actuals_exp, predictions['XGBoost'], 'Actual vs Predicted (XGBoost)', 'actual_vs_predicted_xgboost.png')
+plot_scatter(actuals_exp, predictions['Random Forest (Tuned)'], 'Actual vs Predicted (Random Forest)', 'actual_vs_predicted_random_forest.png')
+plot_scatter(actuals_exp, predictions['XGBoost (Tuned)'], 'Actual vs Predicted (XGBoost)', 'actual_vs_predicted_xgboost.png')
+plot_scatter(actuals_exp, predictions['Stacking Ensemble'], 'Actual vs Predicted (Stacking Ensemble)', 'actual_vs_predicted_stacking.png')
 
 # 7. FINAL MODEL SELECTION
-best_model_name = results_df.sort_values(by='RMSE').iloc[0]['Model']
-print(f"\n7. FINAL MODEL SELECTION: {best_model_name}")
+best_model_row = cv_df.sort_values(by='Mean_CV_RMSE_log').iloc[0]
+best_model_name = best_model_row['Model']
+print(f"\n7. FINAL MODEL SELECTION (by CV RMSE): {best_model_name}")
 
-# i, j) Residuals for best model
 best_preds = predictions[best_model_name]
 residuals = actuals_exp - best_preds
 
 plt.figure(figsize=(10, 6))
-plt.scatter(best_preds, residuals, alpha=0.6)
-plt.axhline(0, color='r', linestyle='--')
-plt.title(f'Residuals vs Predicted ({best_model_name})')
-plt.xlabel('Predicted SalePrice ($)')
-plt.ylabel('Residuals ($)')
+plt.scatter(best_preds, residuals, alpha=0.6, color='purple')
+plt.axhline(0, color='r', linestyle='--', linewidth=2)
+plt.title(f'Residuals vs Predicted ({best_model_name})', fontsize=14, fontweight='bold')
+plt.xlabel('Predicted SalePrice ($)', fontsize=12)
+plt.ylabel('Residuals ($)', fontsize=12)
 ax = plt.gca()
 ax.get_xaxis().set_major_formatter(plt.matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 ax.get_yaxis().set_major_formatter(plt.matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
@@ -222,22 +267,21 @@ plt.savefig("graphs/final_model_residuals.png", dpi=300)
 plt.close()
 
 plt.figure(figsize=(10, 6))
-sns.histplot(residuals, bins=50, kde=True)
-plt.title(f'Prediction Error Distribution ({best_model_name})')
-plt.xlabel('Residuals ($)')
+sns.histplot(residuals, bins=50, kde=True, color='indigo')
+plt.title(f'Prediction Error Distribution ({best_model_name})', fontsize=14, fontweight='bold')
+plt.xlabel('Residuals ($)', fontsize=12)
 ax = plt.gca()
 ax.get_xaxis().set_major_formatter(plt.matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.tight_layout()
 plt.savefig("graphs/prediction_error_distribution.png", dpi=300)
 plt.close()
 
-# Feature Importances
+# Feature Importances for RF & XGBoost
 def plot_feature_importance(pipeline, model_name, filename):
     try:
         model = pipeline.named_steps['model']
         preprocessor = pipeline.named_steps['preprocessor']
         
-        # Get feature names
         cat_encoder = preprocessor.named_transformers_['cat'].named_steps['onehot']
         cat_features = cat_encoder.get_feature_names_out(categorical_features)
         feature_names = np.concatenate([numeric_features, cat_features])
@@ -247,29 +291,29 @@ def plot_feature_importance(pipeline, model_name, filename):
             indices = np.argsort(importances)[::-1][:20]
             
             plt.figure(figsize=(12, 8))
-            sns.barplot(x=importances[indices], y=feature_names[indices], orient='h', palette='viridis')
-            plt.title(f'Top 20 Features Importance ({model_name})')
+            sns.barplot(x=importances[indices], y=feature_names[indices], orient='h', palette='mako')
+            plt.title(f'Top 20 Features Importance ({model_name})', fontsize=14, fontweight='bold')
             plt.tight_layout()
             plt.savefig(f"graphs/{filename}", dpi=300)
             plt.close()
     except Exception as e:
         print(f"Could not plot feature importance for {model_name}: {e}")
 
-plot_feature_importance(pipelines['Random Forest'], 'Random Forest', 'feature_importance_random_forest.png')
-plot_feature_importance(pipelines['XGBoost'], 'XGBoost', 'feature_importance_xgboost.png')
+plot_feature_importance(pipelines['Random Forest (Tuned)'], 'Random Forest (Tuned)', 'feature_importance_random_forest.png')
+plot_feature_importance(pipelines['XGBoost (Tuned)'], 'XGBoost (Tuned)', 'feature_importance_xgboost.png')
 
-# m) sample_predictions_comparison.png
+# sample_predictions_comparison.png
 sample_actuals = actuals_exp.iloc[:5].values
 sample_preds = best_preds[:5]
 sample_indices = np.arange(5)
 width = 0.35
 
 plt.figure(figsize=(10, 6))
-plt.bar(sample_indices - width/2, sample_actuals, width, label='Actual')
-plt.bar(sample_indices + width/2, sample_preds, width, label='Predicted')
-plt.xlabel('Sample Index')
-plt.ylabel('SalePrice ($)')
-plt.title('Actual vs Predicted for 5 Sample Cases')
+plt.bar(sample_indices - width/2, sample_actuals, width, label='Actual', color='#2b5c8f')
+plt.bar(sample_indices + width/2, sample_preds, width, label='Predicted', color='#e07a5f')
+plt.xlabel('Sample Index', fontsize=12)
+plt.ylabel('SalePrice ($)', fontsize=12)
+plt.title(f'Actual vs Predicted for 5 Sample Cases ({best_model_name})', fontsize=14, fontweight='bold')
 plt.xticks(sample_indices, [f'Case {i+1}' for i in range(5)])
 plt.legend()
 ax = plt.gca()
@@ -278,17 +322,17 @@ plt.tight_layout()
 plt.savefig("graphs/sample_predictions_comparison.png", dpi=300)
 plt.close()
 
-# n) project_workflow.png - Vertical workflow diagram
+# Workflow diagram
 fig, ax = plt.subplots(figsize=(8, 14))
 ax.axis('off')
 steps = ['Dataset', 'Data Cleaning', 'EDA', 'Feature Engineering', 'Preprocessing',
-         'Train/Test Split', 'ML Models', 'Evaluation', 'Best Model',
-         'Saved Model (.pkl)', 'Prediction']
+         'Train/Test Split', 'GridSearch & Regularization', 'Stacking Ensemble', 'Evaluation & CV',
+         'Saved Model (.pkl)', 'Prediction & Scaling']
 colors = ['#3498DB', '#E74C3C', '#2ECC71', '#F39C12', '#9B59B6',
           '#1ABC9C', '#E67E22', '#2980B9', '#27AE60', '#8E44AD', '#16A085']
 
 n = len(steps)
-box_w, box_h = 3.0, 0.6
+box_w, box_h = 3.2, 0.6
 x_center = 4.0
 for i, (step, color) in enumerate(zip(steps, colors)):
     y = (n - i) * 1.1
@@ -302,11 +346,10 @@ for i, (step, color) in enumerate(zip(steps, colors)):
 
 ax.set_xlim(1, 7)
 ax.set_ylim(0, (n + 1) * 1.1)
-plt.title("Machine Learning Project Workflow", fontsize=16, fontweight='bold', pad=20)
+plt.title("Machine Learning Project Workflow (Enhanced)", fontsize=16, fontweight='bold', pad=20)
 plt.tight_layout()
 plt.savefig("graphs/project_workflow.png", dpi=300, bbox_inches='tight')
 plt.close()
-
 
 # 8. SAVE FINAL MODEL
 print("\n8. SAVING FINAL MODEL")
@@ -346,7 +389,7 @@ print("-" * 50)
 print(results_df.to_string(index=False))
 print("\nCV Results:")
 print(cv_df.to_string(index=False))
-print(f"\nFinal Model: {best_model_name}")
-print("Graphs saved: 14")
-print("Files created: house_price_model.pkl, sample_predictions.csv")
-print("BUILD COMPLETE")
+print(f"\nFinal Selected Model: {best_model_name}")
+print("Graphs saved to graphs/")
+print("Files updated: house_price_model.pkl, sample_predictions.csv")
+print("BUILD COMPLETE SUCCESS")

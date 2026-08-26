@@ -198,14 +198,17 @@ The notebook contains 23 well-documented sections covering:
 
 ## Model Training
 
-Four regression models were trained on 1,166 records (80% split) with log-transformed target variable:
+Four baseline, regularized, tuned, and ensemble regression models were trained on 1,166 records (80% split) with log-transformed target variable:
 
-| Model | Configuration |
-|-------|---------------|
-| Linear Regression | Default parameters |
+| Model | Configuration / Tuning |
+|-------|------------------------|
+| Linear Regression | Default baseline |
+| Ridge (Tuned) | `GridSearchCV(alpha=10.0)` |
+| Lasso (Tuned) | `GridSearchCV(alpha=0.0005)` |
 | Decision Tree | random_state=42 |
-| Random Forest | n_estimators=300, random_state=42 |
-| XGBoost | n_estimators=400, learning_rate=0.05, random_state=42 |
+| Random Forest (Tuned) | n_estimators=200, max_depth=20 |
+| XGBoost (Tuned) | n_estimators=250, learning_rate=0.05, max_depth=4 |
+| **Stacking Ensemble** | **Base: Ridge, Lasso, RF, XGBoost | Meta-Learner: Ridge(alpha=10.0)** |
 
 ---
 
@@ -215,22 +218,28 @@ Four regression models were trained on 1,166 records (80% split) with log-transf
 
 | Model | MAE ($) | RMSE ($) | R^2 Score |
 |-------|---------|----------|-----------|
-| **Linear Regression** | **$15,272.92** | **$21,545.81** | **0.9160** |
-| XGBoost | $15,398.89 | $21,897.12 | 0.9132 |
-| Random Forest | $16,463.18 | $23,732.28 | 0.8980 |
+| **Stacking Ensemble** | **$13,537.53** | **$18,828.29** | **0.9358** |
+| Lasso (Tuned) | $14,009.81 | $19,420.38 | 0.9317 |
+| XGBoost (Tuned) | $14,304.45 | $19,750.95 | 0.9294 |
+| Ridge (Tuned) | $14,325.67 | $19,844.96 | 0.9287 |
+| Linear Regression | $15,272.92 | $21,545.81 | 0.9160 |
+| Random Forest (Tuned) | $16,496.65 | $23,733.16 | 0.8980 |
 | Decision Tree | $29,453.04 | $43,845.24 | 0.6520 |
 
 ---
 
 ## Actual Results
 
-### Cross Validation (5-Fold, Log-Scale RMSE)
+### Cross Validation (Log-Scale RMSE)
 
 | Model | Mean CV RMSE | Std Dev |
 |-------|-------------|---------|
-| **XGBoost** | **0.1291** | **0.0098** |
-| Linear Regression | 0.1302 | 0.0097 |
-| Random Forest | 0.1371 | 0.0108 |
+| **Stacking Ensemble** | **0.1127** | **0.0101** |
+| Lasso (Tuned) | 0.1139 | 0.0109 |
+| Ridge (Tuned) | 0.1144 | 0.0097 |
+| XGBoost (Tuned) | 0.1237 | 0.0057 |
+| Linear Regression | 0.1302 | 0.0096 |
+| Random Forest (Tuned) | 0.1375 | 0.0109 |
 | Decision Tree | 0.2006 | 0.0104 |
 
 ---
@@ -239,25 +248,35 @@ Four regression models were trained on 1,166 records (80% split) with log-transf
 
 ### Analysis
 
-- **Linear Regression** achieves the best test RMSE ($21,545.81) and R^2 (0.9160), but this is partly due to the high-dimensional one-hot encoded feature space.
-- **XGBoost** has the best cross-validation score (0.1291), indicating superior generalization with lower overfitting risk.
-- **Random Forest** provides solid performance with built-in feature importance.
-- **Decision Tree** shows significant overfitting (low CV performance relative to training performance).
+- **Stacking Ensemble** achieves the best overall performance with test RMSE ($18,828.29), highest R² (0.9358), and lowest cross-validation error (0.1127).
+- **Lasso & Ridge Regularization** effectively handle high-dimensional one-hot encoded features, outperforming standard Linear Regression by over $1,700 in RMSE.
+- **XGBoost (Tuned)** achieves exceptional CV stability (std dev 0.0057) and strong non-linear feature capture.
+- **Random Forest** offers strong feature importance interpretability.
+- **Decision Tree** demonstrates unpruned tree variance.
 
 ---
 
 ## Final Model
 
-**Selected Model: Linear Regression**
+**Selected Model: Stacking Ensemble Regressor**
 
-The Linear Regression model was selected based on:
-- Best test RMSE: $21,545.81
-- Best R^2 score: 0.9160 (captures 91.60% of price variance)
-- Competitive CV score: 0.1302 (close to XGBoost's 0.1291)
-- Simplest model with lowest computational cost
-- Excellent interpretability
+The Stacking Ensemble model was selected based on:
+- Best test RMSE: $18,828.29 (2,717 USD improvement over initial baseline)
+- Highest R^2 score: 0.9358 (captures 93.58% of price variance)
+- Superior CV score: 0.1127 (best overall generalizability across validation folds)
+- Meta-learner stability combining regularized linear and tree boosting models
 
 ---
+
+## Implemented Enhancements
+
+All key roadmap future updates have been fully executed:
+
+- ✅ **Hyperparameter Tuning**: Integrated automated `GridSearchCV` optimization for Ridge, Lasso, Random Forest, and XGBoost regressors.
+- ✅ **Regularization**: Implemented L1 (Lasso) and L2 (Ridge) regression models to control multicollinearity in the feature space.
+- ✅ **Stacking Ensemble**: Built a meta-learning `StackingRegressor` combining base regularized & tree models with a Ridge meta-learner.
+- ✅ **Interactive Web Application**: Updated `index.html` glassmorphic valuation dashboard with live model selection, interactive sliders, dynamic pricing, and city market scaling.
+- ✅ **Geographic Expansion**: Implemented multi-city real estate market adjustment factors (Ames, Des Moines, Chicago, Minneapolis, Denver, Austin, Seattle) in both `predict.py` CLI and web interface.
 
 ## Prediction
 

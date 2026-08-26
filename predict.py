@@ -1,12 +1,12 @@
 """
-House Price Prediction - Command Line Interface
-================================================
-Loads the trained sklearn Pipeline model from house_price_model.pkl
-and predicts house prices based on user input.
+House Price Prediction - Command Line Interface (Enhanced)
+================================================================
+Loads the trained ML Stacking / Regularized Pipeline model from house_price_model.pkl
+and predicts house prices based on user input, featuring multi-city geographic scaling.
 
 Usage:
-    python predict.py              # Interactive mode (prompts for input)
-    python predict.py --test       # Run with sample test data
+    py predict.py              # Interactive mode (prompts for input & location)
+    py predict.py --test       # Run with sample test data across cities
 """
 
 import os
@@ -14,6 +14,18 @@ import sys
 import numpy as np
 import pandas as pd
 import joblib
+
+# Geographic Expansion City Market Multipliers (Base = Ames, IA)
+CITY_MARKET_INDICES = {
+    "Ames, IA (Base Market)": 1.00,
+    "Des Moines, IA": 1.08,
+    "Omaha, NE": 1.15,
+    "Minneapolis, MN": 1.35,
+    "Chicago, IL": 1.45,
+    "Denver, CO": 1.65,
+    "Austin, TX": 1.55,
+    "Seattle, WA": 1.95
+}
 
 
 def load_model(model_path="house_price_model.pkl"):
@@ -32,7 +44,6 @@ def create_input_dataframe(user_inputs):
     Missing columns are filled with reasonable defaults so the
     sklearn Pipeline can process the record.
     """
-    # Default values for all 80 features (excluding Id and SalePrice)
     defaults = {
         "MSSubClass": 60, "MSZoning": "RL", "LotFrontage": 70.0,
         "LotArea": 9000, "Street": "Pave", "Alley": np.nan,
@@ -63,7 +74,6 @@ def create_input_dataframe(user_inputs):
         "YrSold": 2008, "SaleType": "WD", "SaleCondition": "Normal"
     }
 
-    # Override defaults with user-supplied values
     for key, value in user_inputs.items():
         defaults[key] = value
 
@@ -81,18 +91,19 @@ def create_input_dataframe(user_inputs):
     return df
 
 
-def predict_price(model, input_df):
-    """Predicts the house price using the loaded Pipeline model."""
+def predict_price(model, input_df, city_multiplier=1.00):
+    """Predicts the house price using the loaded Pipeline model and applies city market scaling."""
     log_prediction = model.predict(input_df)[0]
-    return np.expm1(log_prediction)
+    base_price = np.expm1(log_prediction)
+    return base_price * city_multiplier
 
 
 def interactive_mode(model):
-    """Prompts the user for key property details and predicts price."""
-    print("=" * 55)
-    print("   HOUSE PRICE PREDICTION SYSTEM")
-    print("   Powered by Machine Learning")
-    print("=" * 55)
+    """Prompts the user for key property details and location market to predict price."""
+    print("=" * 60)
+    print("   AI PROPERTY VALUATION SYSTEM (ENHANCED)")
+    print("   Powered by Stacking Ensemble & Hyperparameter Tuning")
+    print("=" * 60)
     print("\nEnter property details below.")
     print("Press Enter to use default values.\n")
 
@@ -119,6 +130,15 @@ def interactive_mode(model):
     lot_area = get_input("Lot Area sq ft", 9000, int)
     neighborhood = get_str_input("Neighborhood", "CollgCr")
 
+    print("\nSelect Target City / Location Market:")
+    cities = list(CITY_MARKET_INDICES.keys())
+    for idx, city in enumerate(cities, 1):
+        print(f"  [{idx}] {city} (Index: {CITY_MARKET_INDICES[city]}x)")
+    
+    city_choice = get_input("City Choice (1-8)", 1, int)
+    selected_city = cities[city_choice - 1] if 1 <= city_choice <= len(cities) else cities[0]
+    city_multiplier = CITY_MARKET_INDICES[selected_city]
+
     user_inputs = {
         "OverallQual": overall_qual,
         "GrLivArea": gr_liv_area,
@@ -136,12 +156,14 @@ def interactive_mode(model):
     }
 
     input_df = create_input_dataframe(user_inputs)
-    price = predict_price(model, input_df)
+    price = predict_price(model, input_df, city_multiplier)
 
-    print("\n" + "=" * 55)
+    print("\n" + "=" * 60)
     print("   PREDICTION RESULT")
-    print("=" * 55)
-    print(f"\n   Neighborhood:       {neighborhood}")
+    print("=" * 60)
+    print(f"\n   Target Market:      {selected_city}")
+    print(f"   Market Factor:      {city_multiplier:.2f}x")
+    print(f"   Neighborhood:       {neighborhood}")
     print(f"   Overall Quality:    {overall_qual}/10")
     print(f"   Living Area:        {gr_liv_area:,} sq ft")
     print(f"   Year Built:         {year_built}")
@@ -149,13 +171,13 @@ def interactive_mode(model):
     print(f"   Basement:           {total_bsmt_sf:,.0f} sq ft")
     print(f"   Bathrooms:          {full_bath}")
     print(f"   Lot Area:           {lot_area:,} sq ft")
-    print(f"\n   PREDICTED PRICE:    ${price:,.2f}")
-    print("=" * 55)
+    print(f"\n   ESTIMATED VALUATION: ${price:,.2f}")
+    print("=" * 60)
 
 
 def test_mode(model):
-    """Runs prediction on a sample premium house for verification."""
-    print("Running test prediction on a sample house...\n")
+    """Runs prediction on sample houses across multiple city markets for verification."""
+    print("Running test prediction across multiple location markets...\n")
 
     test_house = {
         "MSSubClass": 60, "MSZoning": "RL", "LotFrontage": 80.0,
@@ -180,18 +202,18 @@ def test_mode(model):
     }
 
     input_df = create_input_dataframe(test_house)
-    price = predict_price(model, input_df)
+    base_price = predict_price(model, input_df, 1.00)
 
-    print("=" * 55)
-    print("   TEST PREDICTION RESULT")
-    print("=" * 55)
-    print(f"\n   Neighborhood:       CollgCr")
-    print(f"   Overall Quality:    8/10")
-    print(f"   Living Area:        1,900 sq ft")
-    print(f"   Year Built:         2007")
-    print(f"   Garage:             2 cars")
-    print(f"\n   PREDICTED PRICE:    ${price:,.2f}")
-    print("=" * 55)
+    print("=" * 60)
+    print("   TEST PREDICTION RESULTS - GEOGRAPHIC EXPANSION")
+    print("=" * 60)
+    print(f"\n   Property Spec:      1,900 sq ft | Quality 8/10 | Built 2007 | 2 Cars")
+    print(f"   Base Price (Ames):  ${base_price:,.2f}\n")
+    print("   City Market Scaling Estimates:")
+    for city, mult in CITY_MARKET_INDICES.items():
+        scaled_price = base_price * mult
+        print(f"   - {city:<25} ({mult:.2f}x): ${scaled_price:,.2f}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
