@@ -1,8 +1,9 @@
 """
-DataSpy AI Property Valuation - Local Prediction API Server
-============================================================
-Exposes a lightweight HTTP JSON API on port 5000 using standard library http.server,
-loading the trained sklearn Stacking Ensemble pipeline from house_price_model.pkl.
+DataSpy AI Property Valuation - Local Prediction & Analytics API Server
+=======================================================================
+Exposes HTTP JSON API on port 5000:
+- POST /api/predict: returns ML model prediction using house_price_model.pkl
+- GET /api/analytics: returns dataset statistics and analytics from dataset_analytics.json
 """
 
 import os
@@ -12,8 +13,9 @@ import pandas as pd
 import numpy as np
 import joblib
 
-# Load model pipeline on startup
 MODEL_PATH = "house_price_model.pkl"
+ANALYTICS_PATH = "dataset_analytics.json"
+
 print(f"Loading trained ML Pipeline from {MODEL_PATH}...")
 try:
     model_pipeline = joblib.load(MODEL_PATH)
@@ -22,17 +24,14 @@ except Exception as e:
     print(f"Warning: Could not load {MODEL_PATH}: {e}")
     model_pipeline = None
 
-# City Market Scaling Multipliers
-CITY_MARKET_INDICES = {
-    "1.00": 1.00,
-    "1.08": 1.08,
-    "1.15": 1.15,
-    "1.35": 1.35,
-    "1.45": 1.45,
-    "1.55": 1.55,
-    "1.65": 1.65,
-    "1.95": 1.95
-}
+analytics_cache = {}
+if os.path.exists(ANALYTICS_PATH):
+    try:
+        with open(ANALYTICS_PATH, "r") as f:
+            analytics_cache = json.load(f)
+        print("Analytics dataset metrics loaded into memory.")
+    except Exception as e:
+        print(f"Warning loading analytics JSON: {e}")
 
 def create_input_df(inputs):
     defaults = {
@@ -65,7 +64,6 @@ def create_input_df(inputs):
         "YrSold": 2008, "SaleType": "WD", "SaleCondition": "Normal"
     }
 
-    # Map user parameters
     if "grLivArea" in inputs:
         area = float(inputs["grLivArea"])
         defaults["GrLivArea"] = area
@@ -121,6 +119,17 @@ class PredictAPIHandler(BaseHTTPRequestHandler):
         self._send_cors_headers()
         self.end_headers()
 
+    def do_GET(self):
+        if self.path == '/api/analytics':
+            self.send_response(200)
+            self._send_cors_headers()
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(analytics_cache).encode('utf-8'))
+        else:
+            self.send_response(404)
+            self.end_headers()
+
     def do_POST(self):
         if self.path == '/api/predict':
             content_length = int(self.headers.get('Content-Length', 0))
@@ -128,7 +137,6 @@ class PredictAPIHandler(BaseHTTPRequestHandler):
             try:
                 data = json.loads(body.decode('utf-8'))
                 input_df = create_input_df(data)
-                
                 city_mult = float(data.get("cityMult", 1.0))
                 
                 if model_pipeline is not None:

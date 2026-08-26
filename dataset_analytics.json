@@ -1,0 +1,427 @@
+{
+  "overall": {
+    "total_records": 1460,
+    "min_price": 34900.0,
+    "max_price": 755000.0,
+    "median_price": 163000.0,
+    "mean_price": 180921.19589041095,
+    "median_gr_liv_area": 1464.0,
+    "median_overall_qual": 6.0,
+    "median_total_bsmt_sf": 991.5,
+    "median_garage_cars": 2.0,
+    "median_year_built": 1973.0
+  },
+  "neighborhoods": {
+    "Blmngtn": {
+      "count": 17,
+      "mean": 194870.88235294117,
+      "median": 191000.0,
+      "min": 159895.0,
+      "max": 264561.0
+    },
+    "Blueste": {
+      "count": 2,
+      "mean": 137500.0,
+      "median": 137500.0,
+      "min": 124000.0,
+      "max": 151000.0
+    },
+    "BrDale": {
+      "count": 16,
+      "mean": 104493.75,
+      "median": 106000.0,
+      "min": 83000.0,
+      "max": 125000.0
+    },
+    "BrkSide": {
+      "count": 58,
+      "mean": 124834.05172413793,
+      "median": 124300.0,
+      "min": 39300.0,
+      "max": 223500.0
+    },
+    "ClearCr": {
+      "count": 28,
+      "mean": 212565.42857142858,
+      "median": 200250.0,
+      "min": 130000.0,
+      "max": 328000.0
+    },
+    "CollgCr": {
+      "count": 150,
+      "mean": 197965.77333333335,
+      "median": 197200.0,
+      "min": 110000.0,
+      "max": 424870.0
+    },
+    "Crawfor": {
+      "count": 51,
+      "mean": 210624.72549019608,
+      "median": 200624.0,
+      "min": 90350.0,
+      "max": 392500.0
+    },
+    "Edwards": {
+      "count": 100,
+      "mean": 128219.7,
+      "median": 121750.0,
+      "min": 58500.0,
+      "max": 320000.0
+    },
+    "Gilbert": {
+      "count": 79,
+      "mean": 192854.50632911394,
+      "median": 181000.0,
+      "min": 141000.0,
+      "max": 377500.0
+    },
+    "IDOTRR": {
+      "count": 37,
+      "mean": 100123.78378378379,
+      "median": 103000.0,
+      "min": 34900.0,
+      "max": 169500.0
+    },
+    "MeadowV": {
+      "count": 17,
+      "mean": 98576.4705882353,
+      "median": 88000.0,
+      "min": 75000.0,
+      "max": 151400.0
+    },
+    "Mitchel": {
+      "count": 49,
+      "mean": 156270.1224489796,
+      "median": 153500.0,
+      "min": 84500.0,
+      "max": 271000.0
+    },
+    "NAmes": {
+      "count": 225,
+      "mean": 145847.08,
+      "median": 140000.0,
+      "min": 87500.0,
+      "max": 345000.0
+    },
+    "NPkVill": {
+      "count": 9,
+      "mean": 142694.44444444444,
+      "median": 146000.0,
+      "min": 127500.0,
+      "max": 155000.0
+    },
+    "NWAmes": {
+      "count": 73,
+      "mean": 189050.0684931507,
+      "median": 182900.0,
+      "min": 82500.0,
+      "max": 299800.0
+    },
+    "NoRidge": {
+      "count": 41,
+      "mean": 335295.31707317074,
+      "median": 301500.0,
+      "min": 190000.0,
+      "max": 755000.0
+    },
+    "NridgHt": {
+      "count": 77,
+      "mean": 316270.6233766234,
+      "median": 315000.0,
+      "min": 154000.0,
+      "max": 611657.0
+    },
+    "OldTown": {
+      "count": 113,
+      "mean": 128225.30088495575,
+      "median": 119000.0,
+      "min": 37900.0,
+      "max": 475000.0
+    },
+    "SWISU": {
+      "count": 25,
+      "mean": 142591.36,
+      "median": 139500.0,
+      "min": 60000.0,
+      "max": 200000.0
+    },
+    "Sawyer": {
+      "count": 74,
+      "mean": 136793.13513513515,
+      "median": 135000.0,
+      "min": 62383.0,
+      "max": 190000.0
+    },
+    "SawyerW": {
+      "count": 59,
+      "mean": 186555.7966101695,
+      "median": 179900.0,
+      "min": 76000.0,
+      "max": 320000.0
+    },
+    "Somerst": {
+      "count": 86,
+      "mean": 225379.83720930232,
+      "median": 225500.0,
+      "min": 144152.0,
+      "max": 423000.0
+    },
+    "StoneBr": {
+      "count": 25,
+      "mean": 310499.0,
+      "median": 278000.0,
+      "min": 170000.0,
+      "max": 556581.0
+    },
+    "Timber": {
+      "count": 38,
+      "mean": 242247.44736842104,
+      "median": 228475.0,
+      "min": 137500.0,
+      "max": 378500.0
+    },
+    "Veenker": {
+      "count": 11,
+      "mean": 238772.72727272726,
+      "median": 218000.0,
+      "min": 162500.0,
+      "max": 385000.0
+    }
+  },
+  "quality": [
+    {
+      "OverallQual": 1,
+      "count": 2,
+      "mean": 50150.0,
+      "median": 50150.0
+    },
+    {
+      "OverallQual": 2,
+      "count": 3,
+      "mean": 51770.333333333336,
+      "median": 60000.0
+    },
+    {
+      "OverallQual": 3,
+      "count": 20,
+      "mean": 87473.75,
+      "median": 86250.0
+    },
+    {
+      "OverallQual": 4,
+      "count": 116,
+      "mean": 108420.6551724138,
+      "median": 108000.0
+    },
+    {
+      "OverallQual": 5,
+      "count": 397,
+      "mean": 133523.34760705288,
+      "median": 133000.0
+    },
+    {
+      "OverallQual": 6,
+      "count": 374,
+      "mean": 161603.0347593583,
+      "median": 160000.0
+    },
+    {
+      "OverallQual": 7,
+      "count": 319,
+      "mean": 207716.42319749217,
+      "median": 200141.0
+    },
+    {
+      "OverallQual": 8,
+      "count": 168,
+      "mean": 274735.53571428574,
+      "median": 269750.0
+    },
+    {
+      "OverallQual": 9,
+      "count": 43,
+      "mean": 367513.0232558139,
+      "median": 345000.0
+    },
+    {
+      "OverallQual": 10,
+      "count": 18,
+      "mean": 438588.3888888889,
+      "median": 432390.0
+    }
+  ],
+  "area": {
+    "<1k": {
+      "count": 231,
+      "median": 118000.0
+    },
+    "1k-1.5k": {
+      "count": 554,
+      "median": 148250.0
+    },
+    "1.5k-2k": {
+      "count": 461,
+      "median": 194500.0
+    },
+    "2k-2.5k": {
+      "count": 144,
+      "median": 244200.0
+    },
+    ">2.5k": {
+      "count": 69,
+      "median": 303477.0
+    }
+  },
+  "explorer_records": [
+    {
+      "Id": 1,
+      "Neighborhood": "CollgCr",
+      "SalePrice": 208500,
+      "GrLivArea": 1710,
+      "OverallQual": 7,
+      "YearBuilt": 2003,
+      "GarageCars": 2,
+      "TotalBsmtSF": 856
+    },
+    {
+      "Id": 2,
+      "Neighborhood": "Veenker",
+      "SalePrice": 181500,
+      "GrLivArea": 1262,
+      "OverallQual": 6,
+      "YearBuilt": 1976,
+      "GarageCars": 2,
+      "TotalBsmtSF": 1262
+    },
+    {
+      "Id": 3,
+      "Neighborhood": "CollgCr",
+      "SalePrice": 223500,
+      "GrLivArea": 1786,
+      "OverallQual": 7,
+      "YearBuilt": 2001,
+      "GarageCars": 2,
+      "TotalBsmtSF": 920
+    },
+    {
+      "Id": 4,
+      "Neighborhood": "Crawfor",
+      "SalePrice": 140000,
+      "GrLivArea": 1717,
+      "OverallQual": 7,
+      "YearBuilt": 1915,
+      "GarageCars": 3,
+      "TotalBsmtSF": 756
+    },
+    {
+      "Id": 5,
+      "Neighborhood": "NoRidge",
+      "SalePrice": 250000,
+      "GrLivArea": 2198,
+      "OverallQual": 8,
+      "YearBuilt": 2000,
+      "GarageCars": 3,
+      "TotalBsmtSF": 1145
+    },
+    {
+      "Id": 6,
+      "Neighborhood": "Mitchel",
+      "SalePrice": 143000,
+      "GrLivArea": 1362,
+      "OverallQual": 5,
+      "YearBuilt": 1993,
+      "GarageCars": 2,
+      "TotalBsmtSF": 796
+    },
+    {
+      "Id": 7,
+      "Neighborhood": "Somerst",
+      "SalePrice": 307000,
+      "GrLivArea": 1694,
+      "OverallQual": 8,
+      "YearBuilt": 2004,
+      "GarageCars": 2,
+      "TotalBsmtSF": 1686
+    },
+    {
+      "Id": 8,
+      "Neighborhood": "NWAmes",
+      "SalePrice": 200000,
+      "GrLivArea": 2090,
+      "OverallQual": 7,
+      "YearBuilt": 1973,
+      "GarageCars": 2,
+      "TotalBsmtSF": 1107
+    },
+    {
+      "Id": 9,
+      "Neighborhood": "OldTown",
+      "SalePrice": 129900,
+      "GrLivArea": 1774,
+      "OverallQual": 7,
+      "YearBuilt": 1931,
+      "GarageCars": 2,
+      "TotalBsmtSF": 952
+    },
+    {
+      "Id": 10,
+      "Neighborhood": "BrkSide",
+      "SalePrice": 118000,
+      "GrLivArea": 1077,
+      "OverallQual": 5,
+      "YearBuilt": 1939,
+      "GarageCars": 1,
+      "TotalBsmtSF": 991
+    },
+    {
+      "Id": 11,
+      "Neighborhood": "Sawyer",
+      "SalePrice": 129500,
+      "GrLivArea": 1040,
+      "OverallQual": 5,
+      "YearBuilt": 1965,
+      "GarageCars": 1,
+      "TotalBsmtSF": 1040
+    },
+    {
+      "Id": 12,
+      "Neighborhood": "NridgHt",
+      "SalePrice": 345000,
+      "GrLivArea": 2324,
+      "OverallQual": 9,
+      "YearBuilt": 2005,
+      "GarageCars": 3,
+      "TotalBsmtSF": 1175
+    },
+    {
+      "Id": 13,
+      "Neighborhood": "Sawyer",
+      "SalePrice": 144000,
+      "GrLivArea": 912,
+      "OverallQual": 5,
+      "YearBuilt": 1962,
+      "GarageCars": 1,
+      "TotalBsmtSF": 912
+    },
+    {
+      "Id": 14,
+      "Neighborhood": "CollgCr",
+      "SalePrice": 279500,
+      "GrLivArea": 1494,
+      "OverallQual": 7,
+      "YearBuilt": 2006,
+      "GarageCars": 3,
+      "TotalBsmtSF": 1494
+    },
+    {
+      "Id": 15,
+      "Neighborhood": "NAmes",
+      "SalePrice": 157000,
+      "GrLivArea": 1253,
+      "OverallQual": 6,
+      "YearBuilt": 1960,
+      "GarageCars": 1,
+      "TotalBsmtSF": 1253
+    }
+  ]
+}
