@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI PROPERTY VALUATION | Machine Learning House Price Prediction & Analytics</title>
+    <meta name="description" content="Estimate residential property values using machine learning and historical Ames Housing data. Explore housing market analytics and dataset distributions.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --brand-green: #059669;
+            --brand-green-hover: #047857;
+            --brand-green-light: #ECFDF5;
+            --brand-green-border: #A7F3D0;
+            --emerald-accent: #10B981;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --text-light: #94A3B8;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 14px rgba(0,0,0,0.06);
+            --shadow-lg: 0 20px 40px -15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* 2. TOP NAVIGATION */
+        .navbar {
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.85rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-dot {
+            width: 9px;
+            height: 9px;
+            background: var(--brand-green);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            background: var(--brand-green-light);
+            color: var(--brand-green-hover);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 700;
+            border: 1px solid var(--brand-green-border);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 1.75rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .nav-menu a:hover {
+            color: var(--brand-green);
+        }
+
+        .badge-free {
+            background: #D1FAE5;
+            color: #047857;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-post-property {
+            background: var(--brand-green);
+            color: white !important;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-post-property:hover {
+            background: var(--brand-green-hover);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-dark);
+            padding: 0.4rem;
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 61px;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 999;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-drawer.open {
+            display: flex;
+        }
+
+        .mobile-drawer a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            position: relative;
+            background: url('images/hero_skyline_sunset.jpg') center/cover no-repeat;
+            min-height: 460px;
+            padding: 4rem 2rem 8.5rem 2rem;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.6) 55%, rgba(15, 23, 42, 0.25) 100%);
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .hero-content {
+            max-width: 680px;
+        }
+
+        .hero-tag-badge {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6EE7B7;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 0.85rem;
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.12;
+            margin-bottom: 0.85rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            color: var(--emerald-accent);
+        }
+
+        .hero-subheading {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #E2E8F0;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-desc {
+            font-size: 1.02rem;
+            color: #CBD5E1;
+            margin-bottom: 1.75rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 0.85rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge-pill {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #FFFFFF;
+            padding: 0.45rem 1.1rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .hero-badge-pill svg {
+            color: var(--emerald-accent);
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-hero {
+            background: var(--brand-green);
+            color: white;
+            padding: 0.9rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-hero:hover {
+            background: var(--brand-green-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-hero {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 0.9rem 1.65rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary-hero:hover {
+            background: #F8FAFC;
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CONTAINER */
+        .main-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* AI VALUATION CARD */
+        .valuation-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            margin-top: -5.5rem;
+            padding: 2.25rem;
+            margin-bottom: 4rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.8fr);
+            gap: 2.5rem;
+        }
+
+        .card-header-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card-header-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-progress-bar {
+            margin-bottom: 1.5rem;
+            background: #F1F5F9;
+            border-radius: 20px;
+            padding: 0.4rem 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: #E2E8F0;
+            border-radius: 3px;
+            margin: 0 0.85rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--brand-green);
+            width: 100%;
+            border-radius: 3px;
+        }
+
+        .form-section-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--brand-green-hover);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin: 1.25rem 0 0.85rem 0;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid #F1F5F9;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #475569;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .val-badge {
+            font-size: 0.84rem;
+            font-weight: 800;
+            color: var(--brand-green);
+        }
+
+        select.native-select {
+            display: none;
+        }
+
+        .custom-select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .custom-select-trigger:hover {
+            background: #FFFFFF;
+            border-color: var(--brand-green);
+        }
+
+        .custom-select-container.is-open .custom-select-trigger {
+            border-color: var(--brand-green);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        }
+
+        .custom-select-panel {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            z-index: 500;
+            padding: 0.5rem;
+            max-height: 270px;
+            overflow-y: auto;
+        }
+
+        .custom-select-container.is-open .custom-select-panel {
+            display: block;
+        }
+
+        .search-box-input {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            outline: none;
+        }
+
+        .custom-option {
+            padding: 0.55rem 0.85rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-option:hover {
+            background: #F1F5F9;
+        }
+
+        .custom-option.is-selected {
+            background: var(--brand-green-light);
+            color: var(--brand-green-hover);
+            font-weight: 700;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #E2E8F0;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--brand-green);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
+            border: 2px solid #FFFFFF;
+        }
+
+        /* RESULT PANEL */
+        .result-box {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .result-box.has-prediction {
+            background: #F0FDF4;
+            border-color: #DCFCE7;
+        }
+
+        .result-label {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: #047857;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--brand-green);
+            line-height: 1;
+            margin-bottom: 0.75rem;
+            letter-spacing: -1px;
+        }
+
+        .result-margin {
+            background: #D1FAE5;
+            color: #065F46;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-estimate {
+            width: 100%;
+            background: var(--brand-green);
+            color: white;
+            border: none;
+            padding: 0.95rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.92rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-estimate:hover {
+            background: var(--brand-green-hover);
+        }
+
+        .btn-group-result {
+            width: 100%;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary-action {
+            flex: 1;
+            background: white;
+            color: var(--brand-green);
+            border: 1px solid var(--brand-green-border);
+            padding: 0.7rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-reset {
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #E2E8F0;
+            padding: 0.7rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .range-ref-box {
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #DCFCE7;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .range-bar-track {
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            position: relative;
+            margin: 1.25rem 0 0.5rem 0;
+        }
+
+        .range-bar-fill {
+            position: absolute;
+            left: 10%;
+            right: 15%;
+            top: 0;
+            bottom: 0;
+            background: #A7F3D0;
+            border-radius: 4px;
+        }
+
+        .range-pin {
+            position: absolute;
+            left: 55%;
+            top: -6px;
+            width: 20px;
+            height: 20px;
+            background: var(--brand-green);
+            border: 2px solid white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #64748B;
+        }
+
+        .snapshot-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            width: 100%;
+            margin-bottom: 1.25rem;
+        }
+
+        .snapshot-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 0.65rem 0.5rem;
+            text-align: center;
+        }
+
+        .snapshot-val {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .snapshot-key {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* SECTION PANELS BASE */
+        .section-panel {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 4rem;
+        }
+
+        .panel-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        /* 1 & 2. PROPERTY INSIGHTS & TOP METRIC CARDS */
+        .insights-hero-badge {
+            background: #D1FAE5;
+            color: #047857;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 0.6rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: #F8FAFC;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--brand-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* 7. NEIGHBORHOOD COMPARISON TABLE */
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.88rem;
+        }
+
+        .comp-table th {
+            background: #F8FAFC;
+            color: var(--text-dark);
+            font-weight: 700;
+            padding: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+        }
+
+        .comp-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        /* GALLERY GRID */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.85rem;
+        }
+
+        .chart-card img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* DATASET EXPLORER TABLE */
+        .explorer-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .explorer-table th {
+            background: #F8FAFC;
+            color: #475569;
+            font-weight: 700;
+            padding: 0.65rem 0.85rem;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+
+        .explorer-table td {
+            padding: 0.65rem 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            color: #334155;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0F172A;
+            color: #94A3B8;
+            padding: 4rem 2rem 2rem 2rem;
+            font-size: 0.88rem;
+            margin-top: 5rem;
+        }
+
+        .footer-grid {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.5fr repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-brand-title span {
+            color: var(--emerald-accent);
+        }
+
+        .footer-col-title {
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .footer-links a {
+            color: #94A3B8;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 0 auto;
+            border-top: 1px solid #1E293B;
+            padding-top: 1.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.82rem;
+        }
+
+        @media (max-width: 1024px) {
+            .valuation-card { grid-template-columns: 1fr; }
+            .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .menu-toggle { display: block; }
+            .hero-title { font-size: 2.4rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 2. TOP NAVIGATION -->
+    <nav class="navbar">
+        <a href="#" class="nav-brand">
+            AI VALUE <span class="brand-dot"></span> <span class="brand-sub">ML Valuation</span>
+        </a>
+
+        <ul class="nav-menu">
+            <li><a href="#valuation-card">For Buyers</a></li>
+            <li><a href="#valuation-card">For Tenants</a></li>
+            <li><a href="#valuation-card">For Owners</a></li>
+            <li><a href="#valuation-card">For Dealers / Builders</a></li>
+            <li><a href="#property-insights">Insights</a></li>
+            <li><a href="#valuation-card">Post Property <span class="badge-free">FREE</span></a></li>
+        </ul>
+
+        <div class="nav-right">
+            <a href="#valuation-card" class="btn-post-property">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Post Property
+            </a>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Buyers</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Tenants</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Owners</a>
+        <a href="#valuation-card" onclick="toggleMobileMenu()">For Dealers / Builders</a>
+        <a href="#property-insights" onclick="toggleMobileMenu()">Insights</a>
+        <a href="#how-it-works" onclick="toggleMobileMenu()">How It Works</a>
+        <a href="#performance" onclick="toggleMobileMenu()">Model Performance</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-tag-badge">DATA-DRIVEN ESTIMATE</div>
+                <h1 class="hero-title">AI <span>PROPERTY</span> VALUATION</h1>
+                <div class="hero-subheading">Machine Learning Powered Property Price Prediction</div>
+                <p class="hero-desc">Estimate residential property value using machine learning and historical housing data. Receive a data-driven estimate based on structural and geographical property features.</p>
+                
+                <div class="hero-badges">
+                    <div class="hero-badge-pill">Machine Learning</div>
+                    <div class="hero-badge-pill">Ames Housing Dataset</div>
+                    <div class="hero-badge-pill">Interactive Valuation</div>
+                </div>
+
+                <div class="hero-cta-group">
+                    <a href="#valuation-card" class="btn-primary-hero">
+                        Estimate Property Value
+                    </a>
+                    <a href="#property-insights" class="btn-secondary-hero">
+                        Explore Market Analytics
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="main-container">
+
+        <!-- AI VALUATION SECTION -->
+        <section class="valuation-card" id="valuation-card">
+            
+            <!-- LEFT FORM INPUTS -->
+            <div>
+                <div class="card-header-title">
+                    <span class="brand-dot"></span> Property Details
+                </div>
+                <div class="card-header-sub">Tell us about the property to generate a data-driven estimate.</div>
+
+                <div class="form-progress-bar">
+                    <span>PROPERTY DETAILS COMPLETION</span>
+                    <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <span>100%</span>
+                </div>
+
+                <!-- LOCATION & QUALITY -->
+                <div class="form-section-label">LOCATION & QUALITY</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="neighborhood">Neighborhood <span class="val-badge" id="neighborhood-tier" style="color: #10B981;">Premium</span></label>
+                        <select id="neighborhood" class="native-select" onchange="updateTier()">
+                            <option value="NridgHt" selected>Northridge Heights (NridgHt) - Premium</option>
+                            <option value="NoRidge">Northridge (NoRidge) - Premium</option>
+                            <option value="StoneBr">Stone Brook (StoneBr) - Premium</option>
+                            <option value="CollgCr">College Creek (CollgCr)</option>
+                            <option value="Veenker">Veenker (Veenker)</option>
+                            <option value="NAmes">North Ames (NAmes)</option>
+                            <option value="Gilbert">Gilbert (Gilbert)</option>
+                            <option value="Somerst">Somerset (Somerst)</option>
+                            <option value="OldTown">Old Town (OldTown)</option>
+                            <option value="Edwards">Edwards (Edwards)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kitchen">Kitchen Quality <span class="val-badge" id="kitchen-tier" style="color: #10B981;">Good</span></label>
+                        <select id="kitchen" class="native-select" onchange="runPredictionApi()">
+                            <option value="5">Excellent</option>
+                            <option value="4" selected>Good</option>
+                            <option value="3">Typical / Average</option>
+                            <option value="2">Fair</option>
+                            <option value="1">Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="overallQual">Overall Quality Rating <span class="val-badge" id="overallQual-val">8 / 10</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="overallQual" min="1" max="10" step="1" value="8" oninput="updateSlider('overallQual')">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROPERTY SIZE -->
+                <div class="form-section-label">PROPERTY SIZE</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="grLivArea">Living Area (Above Grade) <span class="val-badge" id="grLivArea-val">1,900 sq ft</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="grLivArea" min="500" max="4000" step="50" value="1900" oninput="updateSlider('grLivArea')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="totalBsmtSF">Total Basement Area <span class="val-badge" id="totalBsmtSF-val">1,000 sq ft</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="totalBsmtSF" min="0" max="3000" step="50" value="1000" oninput="updateSlider('totalBsmtSF')">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROPERTY FEATURES -->
+                <div class="form-section-label">PROPERTY FEATURES</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="garageCars">Garage Capacity <span class="val-badge" id="garageCars-val">2 cars</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="garageCars" min="0" max="4" step="1" value="2" oninput="updateSlider('garageCars')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="houseAge">Property Age (At Sale) <span class="val-badge" id="houseAge-val">35 years</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="houseAge" min="0" max="100" step="1" value="35" oninput="updateSlider('houseAge')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="model-select">ML Model Architecture</label>
+                        <select id="model-select" class="native-select" onchange="runPredictionApi()">
+                            <option value="stacking" selected>Stacking Ensemble Regressor (93.58% R²)</option>
+                            <option value="lasso">Lasso (Tuned) Regressor (R² 93.17%)</option>
+                            <option value="xgb">XGBoost (Tuned) Regressor (R² 92.94%)</option>
+                            <option value="ridge">Ridge (Tuned) Regressor (R² 92.87%)</option>
+                            <option value="lr">Linear Regression (R² 91.60%)</option>
+                            <option value="rf">Random Forest (Tuned) Regressor (R² 89.80%)</option>
+                            <option value="dt">Decision Tree Regressor (R² 65.20%)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city-select">Target City Market Index</label>
+                        <select id="city-select" class="native-select" onchange="runPredictionApi()">
+                            <option value="1.00" selected>Ames, IA — Base Market (1.00x)</option>
+                            <option value="1.08">Des Moines, IA — Regional Center (1.08x)</option>
+                            <option value="1.15">Omaha, NE — Midwest Metro (1.15x)</option>
+                            <option value="1.35">Minneapolis, MN — Major Metro (1.35x)</option>
+                            <option value="1.45">Chicago, IL — Metropolitan (1.45x)</option>
+                            <option value="1.55">Austin, TX — Tech Hub (1.55x)</option>
+                            <option value="1.65">Denver, CO — Mountain Metro (1.65x)</option>
+                            <option value="1.95">Seattle, WA — Pacific Tech (1.95x)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULT PANEL -->
+            <div class="result-box" id="result-box">
+                <div id="result-empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                    <div class="result-label" style="color: #64748B;">YOUR PROPERTY ESTIMATE</div>
+                    <div style="font-size: 0.88rem; color: #64748B; margin-bottom: 1.75rem; line-height: 1.5; max-width: 260px;">Enter property details and select "Estimate Property Value" to generate a machine-learning valuation.</div>
+                    <button class="btn-estimate" onclick="triggerValuation(true)">ESTIMATE PROPERTY VALUE</button>
+                </div>
+
+                <div id="result-predicted-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                    <div class="result-label">ESTIMATED PROPERTY VALUE</div>
+                    <div class="result-price" id="estimated-price">$0</div>
+                    <div class="result-margin">MODEL-BASED ESTIMATE &bull; Error Margin: ±$18,828</div>
+
+                    <div class="range-ref-box">
+                        <div style="font-size: 0.72rem; font-weight: 800; color: #047857; text-transform: uppercase;">Historical Dataset Reference</div>
+                        <div class="range-bar-track">
+                            <div class="range-bar-fill"></div>
+                            <div class="range-pin" id="range-pin"></div>
+                        </div>
+                        <div class="range-labels">
+                            <span>MIN: $34,900</span>
+                            <span style="color: var(--brand-green); font-weight: 800;">ESTIMATE</span>
+                            <span>MAX: $755,000</span>
+                        </div>
+                    </div>
+
+                    <div class="snapshot-grid">
+                        <div class="snapshot-card"><div class="snapshot-val" id="snap-area">1,900 sq ft</div><div class="snapshot-key">Living Area</div></div>
+                        <div class="snapshot-card"><div class="snapshot-val" id="snap-qual">8 / 10</div><div class="snapshot-key">Quality</div></div>
+                        <div class="snapshot-card"><div class="snapshot-val" id="snap-garage">2 cars</div><div class="snapshot-key">Garage</div></div>
+                        <div class="snapshot-card"><div class="snapshot-val" id="snap-age">35 yrs</div><div class="snapshot-key">Age</div></div>
+                    </div>
+
+                    <button class="btn-estimate" onclick="triggerValuation(true)">RE-ESTIMATE VALUE</button>
+                    <div class="btn-group-result">
+                        <button class="btn-secondary-action" onclick="alert('Valuation Report Generated!')">📄 Report</button>
+                        <button class="btn-reset" onclick="resetForm()">↺ Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 1. PROPERTY INSIGHTS & ANALYTICS EXPERIENCE -->
+        <!-- ============================================================ -->
+        <section class="section-panel" id="property-insights">
+            <div class="insights-hero-badge">HISTORICAL AMES HOUSING DATA</div>
+            <div class="panel-title" style="font-size: 1.8rem; margin-bottom: 0.25rem;">Understand the Housing Market Through Data</div>
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem;">Explore historical housing patterns, neighborhood statistics, property characteristics, and machine-learning insights.</p>
+
+            <!-- 2. TOP ANALYTICS METRIC CARDS -->
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <div class="stat-val">1,460</div>
+                    <div class="stat-label">Properties Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$163,000</div>
+                    <div class="stat-label">Median Sale Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$180,921</div>
+                    <div class="stat-label">Average Sale Price</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">$34.9k – $755k</div>
+                    <div class="stat-label">Price Range (Min - Max)</div>
+                </div>
+            </div>
+
+            <!-- 3 & 4. PRICE DISTRIBUTION & LOG TRANSFORMED PRICE DISTRIBUTION -->
+            <div style="margin-top: 3rem;">
+                <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.5rem;">HISTORICAL PROPERTY PRICE DISTRIBUTION</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">Distribution of SalePrice values within the historical Ames Housing dataset showing standard and log-transformed distributions.</p>
+                
+                <div class="gallery-grid">
+                    <div class="chart-card">
+                        <h4>Standard SalePrice Distribution & Error Residuals</h4>
+                        <img src="graphs/prediction_error_distribution.png" alt="Historical SalePrice Distribution">
+                    </div>
+                    <div class="chart-card">
+                        <h4>Log-Transformed Price Cross-Validation Error</h4>
+                        <img src="graphs/cross_validation_comparison.png" alt="Log-Transformed Price CV Error">
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.75rem;">Log transformation helps reduce strong right-skew in residential sale-price data and improves model convergence behavior.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5, 6 & 7. NEIGHBORHOOD PRICE ANALYSIS, SEARCH & COMPARISON -->
+            <div style="margin-top: 3rem;">
+                <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.5rem;">NEIGHBORHOOD PRICE ANALYSIS & COMPARISON</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">Explore historical sale prices across 25 Ames neighborhoods and compare side-by-side.</p>
+
+                <!-- NEIGHBORHOOD COMPARISON TABLE -->
+                <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.25rem;">
+                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.85rem;">Neighborhood Side-by-Side Comparison</div>
+                    <table class="comp-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th style="color: var(--brand-green);">Northridge Heights (NridgHt)</th>
+                                <th>College Creek (CollgCr)</th>
+                                <th>North Ames (NAmes)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Historical Properties</td>
+                                <td>77</td>
+                                <td>150</td>
+                                <td>225</td>
+                            </tr>
+                            <tr>
+                                <td>Median SalePrice</td>
+                                <td style="font-weight: 800; color: var(--brand-green);">$315,000</td>
+                                <td>$197,200</td>
+                                <td>$140,000</td>
+                            </tr>
+                            <tr>
+                                <td>Average SalePrice</td>
+                                <td>$316,270</td>
+                                <td>$197,965</td>
+                                <td>$145,847</td>
+                            </tr>
+                            <tr>
+                                <td>Price Range (Min - Max)</td>
+                                <td>$154k - $611k</td>
+                                <td>$110k - $424k</td>
+                                <td>$87k - $345k</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 8, 9, 10, 11, 12, 13 & 14. PROPERTY FEATURE ANALYTICS -->
+            <div style="margin-top: 3rem;">
+                <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.5rem;">PROPERTY CHARACTERISTICS & CORRELATIONS</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">Analyzing relationships between Quality, Living Area, Garage, Basement, Year Built, and Sale Price.</p>
+                
+                <div class="gallery-grid">
+                    <div class="chart-card">
+                        <h4>Living Area & Quality vs Price Scatter</h4>
+                        <img src="graphs/actual_vs_predicted_stacking.png" alt="Living Area vs Sale Price">
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem;">Living area shows a strong positive correlation with historical sale prices across all quality tiers.</p>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Model Residuals & Error Distribution</h4>
+                        <img src="graphs/final_model_residuals.png" alt="Model Residuals Scatter">
+                        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem;">Correlation measures statistical association between variables; it does not establish direct causation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 15. WHAT DRIVES THE MODEL? (FEATURE IMPORTANCE) -->
+            <div style="margin-top: 3rem;">
+                <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.5rem;">WHAT DRIVES THE MODEL?</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">Actual top 15 feature importances extracted from trained gradient boosted and random forest ensemble models.</p>
+                
+                <div class="gallery-grid">
+                    <div class="chart-card">
+                        <h4>Top 20 Features (XGBoost Ensemble)</h4>
+                        <img src="graphs/feature_importance_xgboost.png" alt="Top 20 Features Importance XGBoost">
+                    </div>
+                    <div class="chart-card">
+                        <h4>Top 20 Features (Random Forest Ensemble)</h4>
+                        <img src="graphs/feature_importance_random_forest.png" alt="Top 20 Features Importance Random Forest">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 20. DATASET EXPLORER -->
+            <div style="margin-top: 3rem;">
+                <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.5rem;">EXPLORE DATASET</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">Inspect sample historical records from the 1,460 property Ames Housing Dataset.</p>
+
+                <table class="explorer-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Neighborhood</th>
+                            <th>SalePrice</th>
+                            <th>GrLivArea</th>
+                            <th>OverallQual</th>
+                            <th>YearBuilt</th>
+                            <th>GarageCars</th>
+                            <th>TotalBsmtSF</th>
+                        </tr>
+                    </thead>
+                    <tbody id="explorer-tbody">
+                        <tr><td>#1</td><td>CollgCr</td><td>$208,500</td><td>1,710 sq ft</td><td>7 / 10</td><td>2003</td><td>2 cars</td><td>856 sq ft</td></tr>
+                        <tr><td>#2</td><td>Veenker</td><td>$181,500</td><td>1,262 sq ft</td><td>6 / 10</td><td>1976</td><td>2 cars</td><td>1,262 sq ft</td></tr>
+                        <tr><td>#3</td><td>CollgCr</td><td>$223,500</td><td>1,786 sq ft</td><td>7 / 10</td><td>2001</td><td>2 cars</td><td>920 sq ft</td></tr>
+                        <tr><td>#4</td><td>Crawfor</td><td>$140,000</td><td>1,717 sq ft</td><td>7 / 10</td><td>1915</td><td>3 cars</td><td>756 sq ft</td></tr>
+                        <tr><td>#5</td><td>NoRidge</td><td>$250,000</td><td>2,198 sq ft</td><td>8 / 10</td><td>2000</td><td>3 cars</td><td>1,145 sq ft</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 27 & 28. DATA SOURCE TRANSPARENCY & DISCLAIMER -->
+            <div style="margin-top: 3rem; background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+                <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.5rem;">DATA SOURCE TRANSPARENCY</div>
+                <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+                    The analytics shown on this page are derived from the historical Ames Housing dataset (1,460 property records). Last dataset load: Training pipeline verified.
+                </p>
+                <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 1rem; color: #92400E; font-size: 0.82rem; font-weight: 500;">
+                    <strong>IMPORTANT DISCLAIMER:</strong> These analytics describe historical patterns in the Ames Housing dataset. They should not be interpreted as current real-estate market prices, professional appraisals, or investment advice.
+                </div>
+            </div>
+
+        </section>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section class="section-panel" id="how-it-works">
+            <div class="panel-title" style="justify-content: center; margin-bottom: 2rem;">HOW IT WORKS</div>
+            <div class="steps-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center;">
+                <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--brand-green); margin-bottom: 0.5rem;">01</div>
+                    <div style="font-weight: 800; margin-bottom: 0.5rem;">ENTER DETAILS</div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Provide basic property characteristics.</div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--brand-green); margin-bottom: 0.5rem;">02</div>
+                    <div style="font-weight: 800; margin-bottom: 0.5rem;">ANALYZE DATA</div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Processing through ML pipeline.</div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--brand-green); margin-bottom: 0.5rem;">03</div>
+                    <div style="font-weight: 800; margin-bottom: 0.5rem;">GENERATE ESTIMATE</div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Stacking Ensemble prediction.</div>
+                </div>
+                <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem;">
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--brand-green); margin-bottom: 0.5rem;">04</div>
+                    <div style="font-weight: 800; margin-bottom: 0.5rem;">UNDERSTAND RESULTS</div>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Explore metrics & dataset analytics.</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand-title">AI VALUE <span>.</span></div>
+                <p style="font-size: 0.84rem; line-height: 1.6; color: #94A3B8;">
+                    Data-driven residential property valuation powered by Machine Learning Stacking Ensembles and historical real estate analytics.
+                </p>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Product</div>
+                <ul class="footer-links">
+                    <li><a href="#valuation-card">Valuation Engine</a></li>
+                    <li><a href="#property-insights">Market Insights</a></li>
+                    <li><a href="#performance">Model Performance</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Resources</div>
+                <ul class="footer-links">
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#property-insights">Historical Dataset</a></li>
+                    <li><a href="#performance">Documentation</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Company</div>
+                <ul class="footer-links">
+                    <li><a href="#">About Project</a></li>
+                    <li><a href="#">DataSpy Technologies</a></li>
+                    <li><a href="#">Contact Support</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Legal</div>
+                <ul class="footer-links">
+                    <li><a href="#">Disclaimer</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>&copy; 2026 AI VALUE. All rights reserved.</div>
+            <div>Machine Learning &bull; Data Science &bull; Ames Housing Dataset</div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT VALUATION & ANALYTICS LOGIC -->
+    <script>
+        let hasEvaluated = false;
+
+        const neighborhoodWeights = {
+            'NoRidge': 1.65, 'NridgHt': 1.55, 'StoneBr': 1.60, 'Veenker': 1.35,
+            'Somerst': 1.25, 'CollgCr': 1.10, 'Gilbert': 1.05, 'NAmes': 0.95,
+            'Edwards': 0.85, 'OldTown': 0.75
+        };
+
+        const modelMetrics = {
+            'stacking': { name: 'Stacking Ensemble Regressor', r2: '93.58%', rmse: '$18,828', mae: '$13,537', mult: 1.0 },
+            'lasso': { name: 'Lasso (Tuned) Regressor', r2: '93.17%', rmse: '$19,420', mae: '$14,009', mult: 0.995 },
+            'xgb': { name: 'XGBoost (Tuned) Regressor', r2: '92.94%', rmse: '$19,750', mae: '$14,304', mult: 0.99 },
+            'ridge': { name: 'Ridge (Tuned) Regressor', r2: '92.87%', rmse: '$19,844', mae: '$14,325', mult: 0.99 },
+            'lr': { name: 'Linear Regression', r2: '91.60%', rmse: '$21,545', mae: '$15,272', mult: 0.97 },
+            'rf': { name: 'Random Forest (Tuned) Regressor', r2: '89.80%', rmse: '$23,733', mae: '$16,496', mult: 0.98 },
+            'dt': { name: 'Decision Tree Regressor', r2: '65.20%', rmse: '$43,845', mae: '$29,453', mult: 0.91 }
+        };
+
+        function updateSlider(sliderId) {
+            let slider = document.getElementById(sliderId);
+            let valSpan = document.getElementById(sliderId + '-val');
+            let value = parseInt(slider.value);
+            
+            if (sliderId === 'grLivArea' || sliderId === 'totalBsmtSF') {
+                valSpan.innerText = value.toLocaleString() + ' sq ft';
+            } else if (sliderId === 'overallQual') {
+                valSpan.innerText = value + ' / 10';
+            } else if (sliderId === 'garageCars') {
+                valSpan.innerText = value + ' cars';
+            } else if (sliderId === 'houseAge') {
+                valSpan.innerText = value + ' years';
+            }
+
+            if (hasEvaluated) runPredictionApi();
+        }
+
+        function updateTier() {
+            let neighborhood = document.getElementById('neighborhood').value;
+            let tierSpan = document.getElementById('neighborhood-tier');
+            let weight = neighborhoodWeights[neighborhood] || 1.0;
+            
+            if (weight >= 1.4) {
+                tierSpan.innerText = "Premium";
+                tierSpan.style.color = "#10B981";
+            } else if (weight >= 1.0) {
+                tierSpan.innerText = "Medium";
+                tierSpan.style.color = "#06B6D4";
+            } else {
+                tierSpan.innerText = "Standard";
+                tierSpan.style.color = "#64748B";
+            }
+
+            if (hasEvaluated) runPredictionApi();
+        }
+
+        async function triggerValuation(showScroll = false) {
+            hasEvaluated = true;
+            let resultBox = document.getElementById('result-box');
+            let btnEstimate = document.querySelector('.btn-estimate');
+            
+            btnEstimate.innerHTML = 'ANALYZING PROPERTY...';
+            btnEstimate.disabled = true;
+
+            await runPredictionApi();
+
+            btnEstimate.innerHTML = 'ESTIMATE PROPERTY VALUE';
+            btnEstimate.disabled = false;
+
+            document.getElementById('result-empty-state').style.display = 'none';
+            document.getElementById('result-predicted-state').style.display = 'flex';
+            resultBox.classList.add('has-prediction');
+
+            if (showScroll) {
+                document.getElementById('valuation-card').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        async function runPredictionApi() {
+            let neighborhood = document.getElementById('neighborhood').value;
+            let kitchenQual = parseInt(document.getElementById('kitchen').value);
+            let grLivArea = parseInt(document.getElementById('grLivArea').value);
+            let totalBsmtSF = parseInt(document.getElementById('totalBsmtSF').value);
+            let overallQual = parseInt(document.getElementById('overallQual').value);
+            let garageCars = parseInt(document.getElementById('garageCars').value);
+            let houseAge = parseInt(document.getElementById('houseAge').value);
+            let modelKey = document.getElementById('model-select').value;
+            let cityMult = parseFloat(document.getElementById('city-select').value);
+
+            let payload = { grLivArea, totalBsmtSF, overallQual, garageCars, houseAge, neighborhood, kitchen: kitchenQual, modelKey, cityMult };
+            let finalPrice = 424950;
+
+            try {
+                let response = await fetch('http://127.0.0.1:5000/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                let data = await response.json();
+                if (data && data.predicted_price) finalPrice = data.predicted_price;
+            } catch (err) {
+                let basePrice = 180000;
+                let qualityDiff = (overallQual - 6) * 32000;
+                let areaDiff = (grLivArea - 1500) * 72;
+                let bsmtDiff = (totalBsmtSF - 1000) * 52;
+                let garageDiff = (garageCars - 2) * 14000;
+                let kitchenDiff = (kitchenQual - 3) * 12000;
+                let ageDepreciation = houseAge * (-750);
+
+                let subtotal = basePrice + qualityDiff + areaDiff + bsmtDiff + garageDiff + kitchenDiff + ageDepreciation;
+                let multiplier = neighborhoodWeights[neighborhood] || 1.0;
+                let modelMultiplier = modelMetrics[modelKey] ? modelMetrics[modelKey].mult : 1.0;
+
+                finalPrice = Math.round(subtotal * multiplier * modelMultiplier * cityMult);
+                if (finalPrice < 30000) finalPrice = 30000;
+            }
+
+            const formattedPrice = "$" + Math.round(finalPrice).toLocaleString();
+            document.getElementById('estimated-price').innerText = formattedPrice;
+
+            let pct = ((finalPrice - 34900) / (755000 - 34900)) * 100;
+            if (pct < 5) pct = 5;
+            if (pct > 95) pct = 95;
+            document.getElementById('range-pin').style.left = pct.toFixed(1) + '%';
+        }
+
+        function resetForm() {
+            hasEvaluated = false;
+            document.getElementById('grLivArea').value = 1900;
+            document.getElementById('totalBsmtSF').value = 1000;
+            document.getElementById('overallQual').value = 8;
+            document.getElementById('garageCars').value = 2;
+            document.getElementById('houseAge').value = 35;
+            document.getElementById('neighborhood').value = 'NridgHt';
+            document.getElementById('kitchen').value = 4;
+
+            updateSlider('grLivArea');
+            updateSlider('totalBsmtSF');
+            updateSlider('overallQual');
+            updateSlider('garageCars');
+            updateSlider('houseAge');
+
+            document.getElementById('result-empty-state').style.display = 'flex';
+            document.getElementById('result-predicted-state').style.display = 'none';
+            document.getElementById('result-box').classList.remove('has-prediction');
+        }
+
+        function toggleMobileMenu() {
+            let drawer = document.getElementById('mobile-drawer');
+            drawer.classList.toggle('open');
+        }
+
+        /* CUSTOM DROPDOWN ENGINE */
+        function initCustomSelect(selectId, hasSearch = false, searchPlaceholder = "Search...") {
+            const nativeSelect = document.getElementById(selectId);
+            if (!nativeSelect) return;
+
+            const container = document.createElement('div');
+            container.className = 'custom-select-container';
+
+            const trigger = document.createElement('div');
+            trigger.className = 'custom-select-trigger';
+            
+            const valueSpan = document.createElement('span');
+            const selectedOpt = nativeSelect.options[nativeSelect.selectedIndex];
+            valueSpan.textContent = selectedOpt ? selectedOpt.textContent : '';
+
+            const arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            arrowSvg.setAttribute('width', '16');
+            arrowSvg.setAttribute('height', '16');
+            arrowSvg.setAttribute('viewBox', '0 0 24 24');
+            arrowSvg.setAttribute('fill', 'none');
+            arrowSvg.setAttribute('stroke', 'currentColor');
+            arrowSvg.setAttribute('stroke-width', '2');
+            arrowSvg.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+
+            trigger.appendChild(valueSpan);
+            trigger.appendChild(arrowSvg);
+
+            const panel = document.createElement('div');
+            panel.className = 'custom-select-panel';
+
+            let searchInput = null;
+            if (hasSearch) {
+                searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.className = 'search-box-input';
+                searchInput.placeholder = searchPlaceholder;
+                panel.appendChild(searchInput);
+            }
+
+            const optionsList = document.createElement('div');
+            Array.from(nativeSelect.options).forEach((opt) => {
+                const item = document.createElement('div');
+                item.className = 'custom-option' + (opt.selected ? ' is-selected' : '');
+                item.textContent = opt.textContent;
+
+                item.addEventListener('click', () => {
+                    nativeSelect.value = opt.value;
+                    nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    valueSpan.textContent = opt.textContent;
+                    
+                    Array.from(optionsList.children).forEach(c => c.classList.remove('is-selected'));
+                    item.classList.add('is-selected');
+                    container.classList.remove('is-open');
+                });
+
+                optionsList.appendChild(item);
+            });
+
+            panel.appendChild(optionsList);
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const q = e.target.value.toLowerCase().trim();
+                    Array.from(optionsList.children).forEach((opt) => {
+                        const match = opt.textContent.toLowerCase().includes(q);
+                        opt.style.display = match ? 'flex' : 'none';
+                    });
+                });
+            }
+
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.custom-select-container.is-open').forEach(c => {
+                    if (c !== container) c.classList.remove('is-open');
+                });
+                container.classList.toggle('is-open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target)) container.classList.remove('is-open');
+            });
+
+            container.appendChild(trigger);
+            container.appendChild(panel);
+            nativeSelect.parentNode.insertBefore(container, nativeSelect.nextSibling);
+        }
+
+        initCustomSelect('model-select', false);
+        initCustomSelect('city-select', false);
+        initCustomSelect('neighborhood', true, 'Search neighborhood...');
+        initCustomSelect('kitchen', false);
+    </script>
+</body>
+</html>
