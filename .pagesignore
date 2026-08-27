@@ -1,0 +1,11 @@
+# Cloudflare Pages Ignore File
+house_price_model.pkl
+dataset/
+*.pkl
+*.csv
+.git/
+.planning/
+api_server.py
+build_complete_pipeline.py
+calculate_analytics.py
+predict.py
